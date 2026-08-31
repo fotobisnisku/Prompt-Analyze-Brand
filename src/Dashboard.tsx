@@ -14,10 +14,11 @@ import {
   Clock
 } from 'lucide-react';
 
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY || ""; // API Key disediakan oleh environment
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || ""; // API Key disediakan oleh environment Vercel
 
 // --- DATA DICTIONARIES ---
-const FONCE_PRODUCT_DETAILS: Record<string, string> = {
+
+const FONCE_PRODUCT_DETAILS: any = {
   "Wild Garden": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Wild Garden" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Winter Bloom": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Winter Bloom" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Roses Vanille": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Roses Vanille" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
@@ -43,7 +44,7 @@ const FONCE_PRODUCT_DETAILS: Record<string, string> = {
   "Grand Gala": `A smooth glossy clear thick-glass perfume bottle with a heavy flat base, filled with a translucent smoked black gradient liquid that transitions into a darker tone toward the bottom. The bottle features rounded shoulders with a clean minimalist cylindrical silhouette. Topped with a tall glossy black plastic cylindrical cap. A thin transparent internal pump tube is visible inside. The front surface features centered gold metallic typography: the brand name foncé, followed by a small letter x and the JFC JAKARTA FRAGRANCE CLUB logo, above the product name GRAND GALA in large elegant serif lettering, with Extrait De Parfum underneath and Special Collection 50 ml near the lower edge.`
 };
 
-const PREDIRE_PRODUCT_DETAILS: Record<string, string> = {
+const PREDIRE_PRODUCT_DETAILS: any = {
   "Orange Poivree": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of transparent cylindrical glass with a thick orange-colored base and thick orange glass walls. Inside, the perfume liquid is a clear transparent orange, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Orange Poivree” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Delish Library": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of matte white cylindrical glass with a thick base and thick glass walls. Solid black text is directly printed on the glass bottle: “Predire” at the top, “Delish Library” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Honey Of The Valley": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of honey-yellow cylindrical glass with a thick honey-yellow base and thick glass walls. Inside, the perfume liquid is a clear transparent honey yellow, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Honey Of The Valley” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
@@ -52,7 +53,7 @@ const PREDIRE_PRODUCT_DETAILS: Record<string, string> = {
   "Or Noir Absolu": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of fully glossy black cylindrical glass. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Or Noir Absolu” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`
 };
 
-const FEEL_ONE_ADULT_PRODUCTS: Record<string, string> = {
+const FEEL_ONE_ADULT_PRODUCTS: any = {
   "Sexy Lady": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy whitish-pink plastic spherical cap and contains a transparent pink liquid. A glossy whitish-pink label is printed directly onto the glass, featuring a lip icon graphic, with the main typography "Sexy Lady" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`,
   "The Gentleman": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy black plastic spherical cap and contains a transparent yellow liquid. A glossy black label is printed directly onto the glass, with the main typography "THE GENTLEMAN" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`,
   "Independent Woman": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy black plastic spherical cap and contains a transparent bright yellow liquid. A glossy black label is printed directly onto the glass, with the main typography "INDEPENDENT WOMAN" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`,
@@ -62,7 +63,7 @@ const FEEL_ONE_ADULT_PRODUCTS: Record<string, string> = {
   "Heartbeat": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy cornflower blue plastic spherical cap and contains a transparent light blue liquid. A glossy white label is printed directly onto the glass, featuring an electrocardiogram graphic, with the main typography "HEARTBEAT" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`
 };
 
-const FEEL_ONE_KIDS_PRODUCTS: Record<string, string> = {
+const FEEL_ONE_KIDS_PRODUCTS: any = {
   "Bunny Cloud": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear pink liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Bunny Cloud, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Butterfly Bloom": `A bottle of perfume with a perfect glossy pink plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear pink liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Butterfly Bloom, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Cuddle Puppy": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear yellowish liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Cuddle Puppy, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
@@ -90,7 +91,7 @@ const LOCK_OPTIONS = [
   "Framing", "Mood"
 ];
 
-const BRANDS: Record<string, any> = {
+const BRANDS: any = {
   FONCE: {
     name: "Foncé",
     details: FONCE_PRODUCT_DETAILS,
@@ -158,10 +159,10 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
   const [isDraggingChar, setIsDraggingChar] = useState(false);
   
   // State for products and filtering (khusus Feel One)
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [activeCategoryTab, setActiveCategoryTab] = useState<'ALL' | 'ADULT' | 'KIDS'>('ALL');
+  const [selectedProducts, setSelectedProducts] = useState<any[]>([]);
+  const [activeCategoryTab, setActiveCategoryTab] = useState('ALL'); // 'ALL' | 'ADULT' | 'KIDS'
 
-  const [lockedParams, setLockedParams] = useState<string[]>([]);
+  const [lockedParams, setLockedParams] = useState<any[]>([]);
   const [additionalText, setAdditionalText] = useState('');
   
   const [isGenerating, setIsGenerating] = useState(false);
@@ -179,7 +180,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     }
   });
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [copiedHistoryId, setCopiedHistoryId] = useState<string | null>(null);
+  const [copiedHistoryId, setCopiedHistoryId] = useState<any>(null);
 
   // Beritahu parent component jika tab ini sedang generating
   useEffect(() => {
@@ -200,9 +201,9 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
   const [cursorPos, setCursorPos] = useState({ x: -1000, y: -1000 });
   const [smoothPos, setSmoothPos] = useState({ x: -1000, y: -1000 });
 
-  const mainInputRef = useRef<HTMLInputElement>(null);
-  const charInputRef = useRef<HTMLInputElement>(null);
-  const requestRef = useRef<number | null>(null);
+  const mainInputRef = useRef<any>(null);
+  const charInputRef = useRef<any>(null);
+  const requestRef = useRef<any>(null);
 
   useEffect(() => {
     if (!isActive) return;
@@ -228,9 +229,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     };
 
     requestRef.current = requestAnimationFrame(animateGlow);
-    return () => {
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
-    };
+    return () => cancelAnimationFrame(requestRef.current);
   }, [cursorPos, isActive]);
 
   useEffect(() => {
@@ -252,7 +251,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     return () => clearInterval(interval);
   }, [isGenerating, brandName]);
 
-  const processImageFile = (file: File, setImageFn: any) => {
+  const processImageFile = (file: any, setImageFn: any) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
       setError('Harap unggah file gambar yang valid.');
@@ -275,26 +274,26 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     reader.readAsDataURL(file);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setImageFn: any) => {
+  const handleImageUpload = (e: any, setImageFn: any) => {
     const file = e.target.files?.[0];
     if (file) {
       processImageFile(file, setImageFn);
     }
   };
 
-  const handleDragOver = (e: React.DragEvent, setDragState: any) => {
+  const handleDragOver = (e: any, setDragState: any) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(true);
   };
 
-  const handleDragLeave = (e: React.DragEvent, setDragState: any) => {
+  const handleDragLeave = (e: any, setDragState: any) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(false);
   };
 
-  const handleDrop = (e: React.DragEvent, setImageFn: any, setDragState: any) => {
+  const handleDrop = (e: any, setImageFn: any, setDragState: any) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(false);
@@ -304,9 +303,9 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     }
   };
 
-  const toggleSelection = (item: string, list: string[], setList: any) => {
+  const toggleSelection = (item: any, list: any[], setList: any) => {
     if (list.includes(item)) {
-      setList(list.filter((i: string) => i !== item));
+      setList(list.filter(i => i !== item));
     } else {
       setList([...list, item]);
     }
@@ -332,7 +331,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     const delays = [1000, 2000, 4000, 8000, 16000];
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -655,7 +654,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                       <button
                         key={tab.id}
                         type="button"
-                        onClick={() => setActiveCategoryTab(tab.id as any)}
+                        onClick={() => setActiveCategoryTab(tab.id)}
                         className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold tracking-wide uppercase transition-all duration-200 flex items-center justify-center gap-1.5
                           ${isActive 
                             ? 'bg-white text-black shadow-sm' 
@@ -984,7 +983,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 
                 {item.products && item.products.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-2">
-                    {item.products.map((p: string, idx: number) => (
+                    {item.products.map((p: any, idx: any) => (
                       <span key={idx} className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/15 text-white border border-white/20">
                         {p}
                       </span>
@@ -1007,12 +1006,12 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 // --- KOMPONEN UTAMA (APP) ---
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('FONCE');
-  const [generatingTabs, setGeneratingTabs] = useState<Record<string, boolean>>({});
+  const [generatingTabs, setGeneratingTabs] = useState<any>({});
 
   useEffect(() => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap';
+    link.href = '[https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap](https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap)';
     document.head.appendChild(link);
 
     const style = document.createElement('style');
@@ -1067,8 +1066,8 @@ export default function Dashboard() {
     { id: 'FEEL_ONE', label: 'Feel One' }
   ];
 
-  const handleTabGeneratingChange = (tabId: string, isGenerating: boolean) => {
-    setGeneratingTabs(prev => ({
+  const handleTabGeneratingChange = (tabId: any, isGenerating: any) => {
+    setGeneratingTabs((prev: any) => ({
       ...prev,
       [tabId]: isGenerating
     }));
@@ -1104,9 +1103,8 @@ export default function Dashboard() {
                     : 'bg-white/5 text-zinc-400 border-white/10 hover:bg-white/10 hover:text-white hover:border-white/20'
                   }`}
               >
-                {/* Error Loader2 sebelumnya sudah diperbaiki di sini */}
                 {isTabGenerating && (
-                  <Loader2 className={`animate-spin ${isActive ? 'text-black' : 'text-amber-400'}`} size={12} />
+                  <Loader2 ${isActive 'text-amber-400'}`} 'text-black' : ? className="{`animate-spin" size="{12}"/>
                 )}
                 <span>{tab.label}</span>
               </button>
@@ -1115,13 +1113,10 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      {/* Error PromptGeneratorTab sebelumnya sudah diperbaiki di sini */}
+      {/* Semua Tab tetap ter-mount agar proses generate dapat berjalan serentak 
+          di latar belakang dan tidak ter-reset saat berpindah antar tab */}
       {tabs.map((tab) => (
-        <PromptGeneratorTab 
-          key={tab.id}
-          brandConfig={BRANDS[tab.id as keyof typeof BRANDS]} 
-          isActive={activeTab === tab.id} 
-          onGeneratingStateChange={(isGen: boolean) => handleTabGeneratingChange(tab.id, isGen)}
+        <PromptGeneratorTab brandConfig="{BRANDS[tab.id]}" isActive="{activeTab" key="{tab.id}" onGeneratingStateChange="{(isGen:" tab.id}> handleTabGeneratingChange(tab.id, isGen)}
         />
       ))}
       
