@@ -1006,7 +1006,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 // --- KOMPONEN UTAMA (APP) ---
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('FONCE');
-  const [generatingTabs, setGeneratingTabs] = useState<Record<string, boolean>>({});
+  const [generatingTabs, setGeneratingTabs] = useState<any>({});
 
   useEffect(() => {
     const link = document.createElement('link');
@@ -1066,8 +1066,8 @@ export default function Dashboard() {
     { id: 'FEEL_ONE', label: 'Feel One' }
   ];
 
-  const handleTabGeneratingChange = (tabId: string, isGenerating: boolean) => {
-    setGeneratingTabs(prev => ({
+  const handleTabGeneratingChange = (tabId: any, isGenerating: any) => {
+    setGeneratingTabs((prev: any) => ({
       ...prev,
       [tabId]: isGenerating
     }));
@@ -1103,9 +1103,8 @@ export default function Dashboard() {
                     : 'bg-white/5 text-zinc-400 border-white/10 hover:bg-white/10 hover:text-white hover:border-white/20'
                   }`}
               >
-                {/* Error Loader2 sebelumnya sudah diperbaiki di sini */}
                 {isTabGenerating && (
-                  <Loader2 className={`animate-spin ${isActive ? 'text-black' : 'text-amber-400'}`} size={12} />
+                  <Loader2 size={12} className={`animate-spin ${isActive ? 'text-black' : 'text-amber-400'}`} />
                 )}
                 <span>{tab.label}</span>
               </button>
@@ -1114,13 +1113,13 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      {/* Error PromptGeneratorTab sebelumnya sudah diperbaiki di sini */}
+      {/* Mounting Semua Tab */}
       {tabs.map((tab) => (
-        <PromptGeneratorTab 
+        <PromptGeneratorTab
           key={tab.id}
-          brandConfig={BRANDS[tab.id as keyof typeof BRANDS]} 
-          isActive={activeTab === tab.id} 
-          onGeneratingStateChange={(isGen: boolean) => handleTabGeneratingChange(tab.id, isGen)}
+          brandConfig={BRANDS[tab.id]}
+          isActive={activeTab === tab.id}
+          onGeneratingStateChange={(isGen: any) => handleTabGeneratingChange(tab.id, isGen)}
         />
       ))}
       
