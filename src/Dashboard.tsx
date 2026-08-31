@@ -18,7 +18,7 @@ const apiKey = import.meta.env?.VITE_GEMINI_API_KEY || "";
 
 // --- DATA DICTIONARIES ---
 
-const FONCE_PRODUCT_DETAILS = {
+const FONCE_PRODUCT_DETAILS: Record<string, string> = {
   "Wild Garden": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Wild Garden" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Winter Bloom": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Winter Bloom" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Roses Vanille": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Roses Vanille" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
@@ -44,7 +44,7 @@ const FONCE_PRODUCT_DETAILS = {
   "Grand Gala": `A smooth glossy clear thick-glass perfume bottle with a heavy flat base, filled with a translucent smoked black gradient liquid that transitions into a darker tone toward the bottom. The bottle features rounded shoulders with a clean minimalist cylindrical silhouette. Topped with a tall glossy black plastic cylindrical cap. A thin transparent internal pump tube is visible inside. The front surface features centered gold metallic typography: the brand name foncé, followed by a small letter x and the JFC JAKARTA FRAGRANCE CLUB logo, above the product name GRAND GALA in large elegant serif lettering, with Extrait De Parfum underneath and Special Collection 50 ml near the lower edge.`
 };
 
-const PREDIRE_PRODUCT_DETAILS = {
+const PREDIRE_PRODUCT_DETAILS: Record<string, string> = {
   "Orange Poivree": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of transparent cylindrical glass with a thick orange-colored base and thick orange glass walls. Inside, the perfume liquid is a clear transparent orange, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Orange Poivree” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Delish Library": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of matte white cylindrical glass with a thick base and thick glass walls. Solid black text is directly printed on the glass bottle: “Predire” at the top, “Delish Library” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Honey Of The Valley": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of honey-yellow cylindrical glass with a thick honey-yellow base and thick glass walls. Inside, the perfume liquid is a clear transparent honey yellow, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Honey Of The Valley” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
@@ -53,7 +53,7 @@ const PREDIRE_PRODUCT_DETAILS = {
   "Or Noir Absolu": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of fully glossy black cylindrical glass. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Or Noir Absolu” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`
 };
 
-const FEEL_ONE_ADULT_PRODUCTS = {
+const FEEL_ONE_ADULT_PRODUCTS: Record<string, string> = {
   "Sexy Lady": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy whitish-pink plastic spherical cap and contains a transparent pink liquid. A glossy whitish-pink label is printed directly onto the glass, featuring a lip icon graphic, with the main typography "Sexy Lady" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`,
   "The Gentleman": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy black plastic spherical cap and contains a transparent yellow liquid. A glossy black label is printed directly onto the glass, with the main typography "THE GENTLEMAN" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`,
   "Independent Woman": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy black plastic spherical cap and contains a transparent bright yellow liquid. A glossy black label is printed directly onto the glass, with the main typography "INDEPENDENT WOMAN" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`,
@@ -63,7 +63,7 @@ const FEEL_ONE_ADULT_PRODUCTS = {
   "Heartbeat": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy cornflower blue plastic spherical cap and contains a transparent light blue liquid. A glossy white label is printed directly onto the glass, featuring an electrocardiogram graphic, with the main typography "HEARTBEAT" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`
 };
 
-const FEEL_ONE_KIDS_PRODUCTS = {
+const FEEL_ONE_KIDS_PRODUCTS: Record<string, string> = {
   "Bunny Cloud": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear pink liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Bunny Cloud, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Butterfly Bloom": `A bottle of perfume with a perfect glossy pink plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear pink liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Butterfly Bloom, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Cuddle Puppy": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear yellowish liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Cuddle Puppy, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
@@ -72,7 +72,7 @@ const FEEL_ONE_KIDS_PRODUCTS = {
   "Little Doctor": `A bottle of perfume with a perfect glossy pink plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear light pink liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Little Doctor, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Magic Unicorn": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear light purple liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Magic Unicorn, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Mini Elephant": `A bottle of perfume with a perfect glossy blue plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear blue liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Mini Elephant, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
-  "Police Hero": `A bottle of perfume with a perfect glossy black plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear light blue liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Police Hero, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
+  "Police Hero": `A bottle of perfume with a perfect glossy black plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear light blue liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Police Hero, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", dan a small circular monogram logo.`,
   "Safari Giraffe": `A bottle of perfume with a perfect glossy black plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear yellow liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Safari Giraffe, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Sea Mermaid": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear sea blue liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Sea Mermaid, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Sky Pilot": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear light blue liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Sky Pilot, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
@@ -91,7 +91,7 @@ const LOCK_OPTIONS = [
   "Framing", "Mood"
 ];
 
-const BRANDS = {
+const BRANDS: Record<string, any> = {
   FONCE: {
     name: "Foncé",
     details: FONCE_PRODUCT_DETAILS,
@@ -109,13 +109,13 @@ const BRANDS = {
     details: FEEL_ONE_PRODUCT_DETAILS,
     storageKey: "feelone_prompt_history",
     specRule: "Bottle geometry & glass shape (e.g. square-shaped with rounded corners & embossed dotted texture for ADULT series, or glossy transparent cylindrical bottle with thick glass base for KIDS series). Cap shape & finish (e.g. spherical cap / ball cap with exact plastic color and gloss). Liquid translucency, exact liquid color, and internal transparent pump mechanism. ALL typography, quotes, cartoon illustrations / graphics, and monogram logos verbatim as provided. Bottom markings and size designations ('eau de parfum / extrait de parfum', '35 ml', etc.).",
-    hasCategories: true, // Flag khusus untuk Feel One agar merender filter kategori
+    hasCategories: true,
     adultProducts: FEEL_ONE_ADULT_PRODUCTS,
     kidsProducts: FEEL_ONE_KIDS_PRODUCTS
   }
 };
 
-const getSystemPrompt = (brandName, specRule) => `
+const getSystemPrompt = (brandName: string, specRule: string) => `
 MASTER PROMPT
 PHOTOGRAPHY REFERENCE ANALYZER & FULL PRODUCT SPECIFICATION INJECTION ENGINE
 ════════════════════════════════════════════════════════════════
@@ -148,41 +148,38 @@ FINAL PROMPT FORMAT:
 [Shot Type] of [Subject: Full Unabridged Product Identity & Exact Specifications for ALL selected products arranged together], [Pose + Framing + Composition], in/against [Environment + Background], color palette – [Dominant + Accent + Shadow Tone + Highlight Tone], [Surface Finish], [Creative Direction], Atmosphere – [Mood], [Symbolism - if relevant], hyperrealistic detail, ultra sharp focus, [Lighting + Aesthetic], shot on [Camera + Lens + Technical].
 `;
 
-// --- COMPONENT DINAMIS TAB UTAMA ---
-function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) {
+function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: any) {
   const { name: brandName, details: productDetailsMap, storageKey, specRule, hasCategories, adultProducts, kidsProducts } = brandConfig;
   const brandProducts = Object.keys(productDetailsMap);
 
-  const [mainImage, setMainImage] = useState(null);
-  const [charImage, setCharImage] = useState(null);
+  const [mainImage, setMainImage] = useState<any>(null);
+  const [charImage, setCharImage] = useState<any>(null);
   const [isDraggingMain, setIsDraggingMain] = useState(false);
   const [isDraggingChar, setIsDraggingChar] = useState(false);
   
-  // State for products and filtering (khusus Feel One)
-  const [selectedProducts, setSelectedProducts] = useState([]);
-  const [activeCategoryTab, setActiveCategoryTab] = useState('ALL'); // 'ALL' | 'ADULT' | 'KIDS'
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [activeCategoryTab, setActiveCategoryTab] = useState('ALL');
 
-  const [lockedParams, setLockedParams] = useState([]);
+  const [lockedParams, setLockedParams] = useState<string[]>([]);
   const [additionalText, setAdditionalText] = useState('');
   
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationStatus, setGenerationStatus] = useState('');
+  const [, setGenerationStatus] = useState('');
   const [outputPrompt, setOutputPrompt] = useState('');
   const [error, setError] = useState('');
   const [isCopied, setIsCopied] = useState(false);
 
-  const [history, setHistory] = useState(() => {
+  const [history, setHistory] = useState<any[]>(() => {
     try {
       const saved = localStorage.getItem(storageKey);
       return saved ? JSON.parse(saved) : [];
-    } catch (e) {
+    } catch {
       return [];
     }
   });
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [copiedHistoryId, setCopiedHistoryId] = useState(null);
+  const [copiedHistoryId, setCopiedHistoryId] = useState<string | null>(null);
 
-  // Beritahu parent component jika tab ini sedang generating
   useEffect(() => {
     if (onGeneratingStateChange) {
       onGeneratingStateChange(isGenerating);
@@ -197,17 +194,16 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
     }
   }, [history, storageKey]);
 
-  // Mouse position state for smooth brush glow
   const [cursorPos, setCursorPos] = useState({ x: -1000, y: -1000 });
   const [smoothPos, setSmoothPos] = useState({ x: -1000, y: -1000 });
 
-  const mainInputRef = useRef(null);
-  const charInputRef = useRef(null);
-  const requestRef = useRef(null);
+  const mainInputRef = useRef<HTMLInputElement>(null);
+  const charInputRef = useRef<HTMLInputElement>(null);
+  const requestRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!isActive) return;
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       setCursorPos({ x: e.clientX, y: e.clientY });
     };
 
@@ -229,11 +225,13 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
     };
 
     requestRef.current = requestAnimationFrame(animateGlow);
-    return () => cancelAnimationFrame(requestRef.current);
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    };
   }, [cursorPos, isActive]);
 
   useEffect(() => {
-    let interval;
+    let interval: ReturnType<typeof setInterval>;
     if (isGenerating) {
       const statuses = [
         "Menganalisa DNA visual...", 
@@ -251,7 +249,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
     return () => clearInterval(interval);
   }, [isGenerating, brandName]);
 
-  const processImageFile = (file, setImageFn) => {
+  const processImageFile = (file: File, setImageFn: any) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
       setError('Harap unggah file gambar yang valid.');
@@ -267,33 +265,33 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
         file: file,
         dataUrl: reader.result,
         mimeType: file.type,
-        base64: reader.result.split(',')[1]
+        base64: (reader.result as string).split(',')[1]
       });
       setError('');
     };
     reader.readAsDataURL(file);
   };
 
-  const handleImageUpload = (e, setImageFn) => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setImageFn: any) => {
     const file = e.target.files?.[0];
     if (file) {
       processImageFile(file, setImageFn);
     }
   };
 
-  const handleDragOver = (e, setDragState) => {
+  const handleDragOver = (e: React.DragEvent, setDragState: any) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(true);
   };
 
-  const handleDragLeave = (e, setDragState) => {
+  const handleDragLeave = (e: React.DragEvent, setDragState: any) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(false);
   };
 
-  const handleDrop = (e, setImageFn, setDragState) => {
+  const handleDrop = (e: React.DragEvent, setImageFn: any, setDragState: any) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(false);
@@ -303,7 +301,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
     }
   };
 
-  const toggleSelection = (item, list, setList) => {
+  const toggleSelection = (item: string, list: string[], setList: any) => {
     if (list.includes(item)) {
       setList(list.filter(i => i !== item));
     } else {
@@ -313,25 +311,19 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
 
   const handleCopy = () => {
     if (!outputPrompt) return;
-    const textArea = document.createElement("textarea");
-    textArea.value = outputPrompt;
-    document.body.appendChild(textArea);
-    textArea.select();
-    try {
-      document.execCommand('copy');
+    navigator.clipboard.writeText(outputPrompt).then(() => {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
-    } catch (e) {
+    }).catch((e) => {
       console.error("Gagal menyalin teks", e);
-    }
-    document.body.removeChild(textArea);
+    });
   };
 
-  const callGeminiWithBackoff = async (payload, maxRetries = 5) => {
+  const callGeminiWithBackoff = async (payload: any, maxRetries = 5) => {
     const delays = [1000, 2000, 4000, 8000, 16000];
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -389,7 +381,7 @@ CRITICAL ENFORCEMENT: Exactly ${productCount} product(s) are selected (${selecte
 You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH selected product into the SUBJECT section of your output prompt. DO NOT summarize or omit any detail.`
         : `Analyze the attached MAIN REFERENCE IMAGE based on the system instructions and construct the photography prompt.`;
 
-      const contents = [
+      const contents: any[] = [
         {
           role: "user",
           parts: [
@@ -415,7 +407,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 
       const data = await callGeminiWithBackoff(payload);
 
-      const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      const generatedText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (generatedText) {
         const cleanText = generatedText.replace(/```[a-z]*\n?/gi, '').trim();
         setOutputPrompt(cleanText);
@@ -434,29 +426,23 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
       } else {
         throw new Error('AI tidak memberikan respon teks.');
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || "Terjadi kesalahan sistem.");
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const copyHistoryPrompt = (item) => {
-    const textArea = document.createElement("textarea");
-    textArea.value = item.prompt;
-    document.body.appendChild(textArea);
-    textArea.select();
-    try {
-      document.execCommand('copy');
+  const copyHistoryPrompt = (item: any) => {
+    navigator.clipboard.writeText(item.prompt).then(() => {
       setCopiedHistoryId(item.id);
       setTimeout(() => setCopiedHistoryId(null), 2000);
-    } catch (e) {
+    }).catch((e) => {
       console.error("Gagal menyalin riwayat", e);
-    }
-    document.body.removeChild(textArea);
+    });
   };
 
-  const restoreHistoryItem = (item) => {
+  const restoreHistoryItem = (item: any) => {
     setOutputPrompt(item.prompt);
     if (item.products && item.products.length > 0) {
       setSelectedProducts(item.products);
@@ -472,18 +458,16 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 
   return (
     <div className={isActive ? 'contents' : 'hidden'}>
-      {/* Smooth Brush Glow Pointer Layer */}
       <div 
         className="pointer-events-none fixed inset-0 z-0 transition-opacity duration-700"
         style={{
-          background: `radial-gradient(600px circle at ${smoothPos.x}px ${smoothPos.y}px, rgba(255, 255, 255, 0.085), transparent 80%)`,
+          background: `radial-gradient(600px circle at ${smoothPos.x}px ${smoothPos.y}px, rgba(255, 255, 255, 0.08), transparent 80%)`,
         }}
       />
-      {/* Secondary Ambient Accent Glow */}
       <div 
         className="pointer-events-none fixed inset-0 z-0 transition-opacity duration-1000"
         style={{
-          background: `radial-gradient(350px circle at ${smoothPos.x}px ${smoothPos.y}px, rgba(255, 255, 255, 0.05), transparent 70%)`,
+          background: `radial-gradient(350px circle at ${smoothPos.x}px ${smoothPos.y}px, rgba(255, 255, 255, 0.04), transparent 70%)`,
         }}
       />
 
@@ -505,7 +489,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 
       <main className="flex-grow flex flex-col items-center justify-center py-8 px-4 md:px-6 w-full max-w-4xl mx-auto relative z-10 pt-24 md:pt-28">
         
-        {/* Minimalist Header */}
         <div className="mb-8 text-center flex flex-col items-center">
           <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-semibold tracking-widest uppercase mb-3 shadow-sm">
             <span>{brandName}</span>
@@ -515,10 +498,8 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
           </h1>
         </div>
 
-        {/* Frosted Glass Main Card */}
-        <div className="w-full bg-white/25 backdrop-blur-2xl p-6 md:p-9 rounded-[32px] card-shadow-frosted border border-white/30 relative">
+        <div className="w-full bg-white/[0.08] backdrop-blur-2xl p-6 md:p-9 rounded-[32px] card-shadow-frosted border border-white/20 relative">
           
-          {/* Smooth Disappearing Error Alert */}
           <div className={`transition-all duration-500 ease-in-out overflow-hidden ${error ? 'max-h-24 opacity-100 mb-6' : 'max-h-0 opacity-0 mb-0'}`}>
             <div className="bg-red-500/20 text-red-200 p-3.5 rounded-2xl flex items-center gap-3 border border-red-400/30 text-xs font-semibold backdrop-blur-md">
               <AlertCircle className="shrink-0 text-red-400" size="{16}"/>
@@ -527,15 +508,13 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
           </div>
 
           <div className="space-y-7">
-            {/* Image Upload Area */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Main Reference */}
               <div className="flex flex-col items-center">
                 <div className="text-center mb-2.5">
                   <div className="text-xs font-bold text-white tracking-wide uppercase">
                     Main Reference <span className="text-red-400 font-bold">*</span>
                   </div>
-                  <div className="text-[11px] text-zinc-300 font-medium mt-0.5">Visual Blueprint</div>
+                  <div className="text-[11px] text-zinc-400 font-medium mt-0.5">Visual Blueprint</div>
                 </div>
                 
                 <div 
@@ -547,8 +526,8 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                     ${isDraggingMain 
                       ? 'border-white bg-white/20 scale-[1.01]' 
                       : mainImage 
-                        ? 'border-white/20 bg-black/30' 
-                        : 'border-dashed border-white/30 bg-black/20 hover:bg-white/10 hover:border-white/60'}`}
+                        ? 'border-white/20 bg-black/40' 
+                        : 'border-dashed border-white/30 bg-black/30 hover:bg-white/10 hover:border-white/60'}`}
                 >
                   {mainImage ? (
                     <>
@@ -565,24 +544,23 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                     </>
                   ) : (
                     <div className="text-center p-4 flex flex-col items-center">
-                      <div className="w-10 h-10 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-white mb-2.5 group-hover:scale-105 transition-all shadow-sm">
+                      <div className="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-white mb-2.5 group-hover:scale-105 transition-all shadow-sm">
                         <UploadCloud size="{18}"/>
                       </div>
                       <p className="text-xs font-bold text-white">Unggah Gambar Utama</p>
-                      <p className="text-[10px] text-zinc-300 mt-0.5">Drag & drop atau klik (Maks. 5MB)</p>
+                      <p className="text-[10px] text-zinc-400 mt-0.5">Drag & drop atau klik (Maks. 5MB)</p>
                     </div>
                   )}
                   <input type="file" accept="image/*" ref={mainInputRef} onChange={(e) => handleImageUpload(e, setMainImage)} className="hidden" />
                 </div>
               </div>
 
-              {/* Character Reference */}
               <div className="flex flex-col items-center">
                 <div className="text-center mb-2.5">
                   <div className="text-xs font-bold text-white tracking-wide uppercase">
                     Character Reference
                   </div>
-                  <div className="text-[11px] text-zinc-300 font-medium mt-0.5">Opsional</div>
+                  <div className="text-[11px] text-zinc-400 font-medium mt-0.5">Opsional</div>
                 </div>
                 
                 <div 
@@ -594,8 +572,8 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                     ${isDraggingChar 
                       ? 'border-white bg-white/20 scale-[1.01]' 
                       : charImage 
-                        ? 'border-white/20 bg-black/30' 
-                        : 'border-dashed border-white/30 bg-black/20 hover:bg-white/10 hover:border-white/60'}`}
+                        ? 'border-white/20 bg-black/40' 
+                        : 'border-dashed border-white/30 bg-black/30 hover:bg-white/10 hover:border-white/60'}`}
                 >
                   {charImage ? (
                     <>
@@ -612,11 +590,11 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                     </>
                   ) : (
                     <div className="text-center p-4 flex flex-col items-center">
-                      <div className="w-10 h-10 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-zinc-200 mb-2.5 group-hover:scale-105 transition-all shadow-sm">
+                      <div className="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-zinc-200 mb-2.5 group-hover:scale-105 transition-all shadow-sm">
                         <ImageIcon size="{18}"/>
                       </div>
-                      <p className="text-xs font-bold text-zinc-100">Model / Karakter</p>
-                      <p className="text-[10px] text-zinc-300 mt-0.5">Drag & drop atau klik (Opsional)</p>
+                      <p className="text-xs font-bold text-zinc-200">Model / Karakter</p>
+                      <p className="text-[10px] text-zinc-400 mt-0.5">Drag & drop atau klik (Opsional)</p>
                     </div>
                   )}
                   <input type="file" accept="image/*" ref={charInputRef} onChange={(e) => handleImageUpload(e, setCharImage)} className="hidden" />
@@ -624,30 +602,28 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
               </div>
             </div>
 
-            {/* Product Library Section */}
             <div>
               <div className="flex items-center justify-between mb-3">
                 <label className="text-xs font-bold text-white tracking-wide uppercase">
                   Select Product Library
                 </label>
                 {selectedProducts.length > 0 && (
-                  <span className="text-[11px] font-bold text-black bg-white px-2.5 py-0.5 rounded-full shadow-xs">
+                  <span className="text-[11px] font-bold text-black bg-white px-2.5 py-0.5 rounded-full shadow-sm">
                     {selectedProducts.length} dipilih
                   </span>
                 )}
               </div>
 
-              {/* Tampilkan filter kategori JIKA flag hasCategories = true (kasus Feel One) */}
               {hasCategories && (
-                <div className="flex items-center gap-1.5 p-1 bg-black/35 rounded-xl border border-white/15 backdrop-blur-md mb-3">
+                <div className="flex items-center gap-1.5 p-1 bg-black/40 rounded-xl border border-white/15 backdrop-blur-md mb-3">
                   {[
                     { id: 'ALL', label: 'All Series' },
                     { id: 'ADULT', label: 'Adult' },
                     { id: 'KIDS', label: 'Kids' }
                   ].map((tab) => {
-                    const isActive = activeCategoryTab === tab.id;
-                    const adultCount = selectedProducts.filter(p => Object.keys(adultProducts).includes(p)).length;
-                    const kidsCount = selectedProducts.filter(p => Object.keys(kidsProducts).includes(p)).length;
+                    const isTabActive = activeCategoryTab === tab.id;
+                    const adultCount = selectedProducts.filter(p => Object.keys(adultProducts || {}).includes(p)).length;
+                    const kidsCount = selectedProducts.filter(p => Object.keys(kidsProducts || {}).includes(p)).length;
                     const badge = tab.id === 'ADULT' ? adultCount : tab.id === 'KIDS' ? kidsCount : selectedProducts.length;
 
                     return (
@@ -656,15 +632,15 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                         type="button"
                         onClick={() => setActiveCategoryTab(tab.id)}
                         className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold tracking-wide uppercase transition-all duration-200 flex items-center justify-center gap-1.5
-                          ${isActive 
+                          ${isTabActive 
                             ? 'bg-white text-black shadow-sm' 
                             : 'text-zinc-400 hover:text-white hover:bg-white/10'
                           }`}
                       >
                         <span>{tab.label}</span>
                         {badge > 0 && (
-                          <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                            isActive ? 'bg-black text-white' : 'bg-white/20 text-white'
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                            isTabActive ? 'bg-black text-white' : 'bg-white/20 text-white'
                           }`}>
                             {badge}
                           </span>
@@ -675,11 +651,9 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                 </div>
               )}
 
-              {/* Rendering list produk berdasarkan kategori aktif atau semua (jika bukan Feel One) */}
-              <div className="max-h-48 overflow-y-auto custom-scroll p-1 space-y-3 bg-black/20 rounded-2xl border border-white/10 p-2.5">
+              <div className="max-h-48 overflow-y-auto custom-scroll space-y-3 bg-black/30 rounded-2xl border border-white/10 p-3">
                 {hasCategories ? (
                   <>
-                    {/* Bagian Adult Series */}
                     {(activeCategoryTab === 'ALL' || activeCategoryTab === 'ADULT') && (
                       <div>
                         {activeCategoryTab === 'ALL' && (
@@ -689,7 +663,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                           </div>
                         )}
                         <div className="flex flex-wrap gap-1.5">
-                          {Object.keys(adultProducts).map((prod) => {
+                          {Object.keys(adultProducts || {}).map((prod) => {
                             const isSelected = selectedProducts.includes(prod);
                             return (
                               <button
@@ -699,7 +673,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
                                   ${isSelected 
                                     ? 'bg-white text-black border-white shadow-sm font-bold scale-[1.02]' 
-                                    : 'bg-black/30 text-zinc-200 border-white/20 hover:border-white/50 hover:bg-white/15'
+                                    : 'bg-black/40 text-zinc-300 border-white/15 hover:border-white/40 hover:bg-white/15'
                                   }`}
                               >
                                 {prod}
@@ -710,7 +684,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                       </div>
                     )}
 
-                    {/* Bagian Kids Series */}
                     {(activeCategoryTab === 'ALL' || activeCategoryTab === 'KIDS') && (
                       <div>
                         {activeCategoryTab === 'ALL' && (
@@ -720,7 +693,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                           </div>
                         )}
                         <div className="flex flex-wrap gap-1.5">
-                          {Object.keys(kidsProducts).map((prod) => {
+                          {Object.keys(kidsProducts || {}).map((prod) => {
                             const isSelected = selectedProducts.includes(prod);
                             return (
                               <button
@@ -730,7 +703,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
                                   ${isSelected 
                                     ? 'bg-white text-black border-white shadow-sm font-bold scale-[1.02]' 
-                                    : 'bg-black/30 text-zinc-200 border-white/20 hover:border-white/50 hover:bg-white/15'
+                                    : 'bg-black/40 text-zinc-300 border-white/15 hover:border-white/40 hover:bg-white/15'
                                   }`}
                               >
                                 {prod}
@@ -742,7 +715,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                     )}
                   </>
                 ) : (
-                  // Rendering normal untuk brand tanpa kategori (Fonce, Predire)
                   <div className="flex flex-wrap gap-1.5">
                     {brandProducts.map((prod) => {
                       const isSelected = selectedProducts.includes(prod);
@@ -754,7 +726,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                           className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
                             ${isSelected 
                               ? 'bg-white text-black border-white shadow-sm font-bold scale-[1.02]' 
-                              : 'bg-black/25 text-zinc-200 border-white/20 hover:border-white/50 hover:bg-white/15 shadow-2xs'
+                              : 'bg-black/40 text-zinc-300 border-white/15 hover:border-white/40 hover:bg-white/15 shadow-sm'
                             }`}
                         >
                           {prod}
@@ -766,19 +738,18 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
               </div>
             </div>
 
-            {/* Smooth Disappearing & Appearing Lock Parameters */}
             <div 
               className={`transition-all duration-500 ease-in-out overflow-hidden ${
                 selectedProducts.length > 0 ? 'max-h-48 opacity-100 pt-1' : 'max-h-0 opacity-0 pt-0'
               }`}
             >
-              <div className="p-4 rounded-2xl bg-black/25 border border-white/20 backdrop-blur-md shadow-2xs">
+              <div className="p-4 rounded-2xl bg-black/35 border border-white/20 backdrop-blur-md shadow-sm">
                 <div className="flex items-center gap-1.5 mb-2.5">
-                  <Lock className="text-zinc-200" size="{13}"/>
+                  <Lock className="text-zinc-300" size="{13}"/>
                   <span className="text-xs font-bold text-white tracking-wide uppercase">
                     Lock Parameters
                   </span>
-                  <span className="text-[10px] font-semibold text-zinc-300 ml-auto">
+                  <span className="text-[10px] font-semibold text-zinc-400 ml-auto">
                     Prioritas Tertinggi
                   </span>
                 </div>
@@ -792,8 +763,8 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                         onClick={() => toggleSelection(lock, lockedParams, setLockedParams)}
                         className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all duration-200 border flex items-center gap-1.5
                           ${isLocked 
-                            ? 'bg-white text-black border-white shadow-xs font-bold' 
-                            : 'bg-white/10 text-zinc-200 border-white/20 hover:border-white/40 hover:bg-white/20 shadow-2xs'
+                            ? 'bg-white text-black border-white shadow-sm font-bold' 
+                            : 'bg-white/10 text-zinc-300 border-white/15 hover:border-white/30 hover:bg-white/20'
                           }`}
                       >
                         {isLocked && <Check className="stroke-[3]" size="{11}"/>}
@@ -805,7 +776,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
               </div>
             </div>
 
-            {/* Minimalist Textarea */}
             <div>
               <label className="block text-xs font-bold text-white tracking-wide uppercase mb-2">
                 Additional Instructions
@@ -814,18 +784,17 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                 value={additionalText}
                 onChange={(e) => setAdditionalText(e.target.value)}
                 placeholder="Tambahkan arahan kreatif, perubahan sudut, atau detail pencahayaan..."
-                className="w-full bg-black/25 border border-white/25 rounded-2xl p-3.5 text-xs text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/60 focus:bg-black/35 transition-all resize-none h-20 leading-relaxed font-medium backdrop-blur-md shadow-inner"
+                className="w-full bg-black/30 border border-white/20 rounded-2xl p-3.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/50 transition-all resize-none h-20 leading-relaxed font-medium backdrop-blur-md shadow-inner"
               />
             </div>
 
-            {/* Sleek Minimalist Generate Button */}
             <div className="flex justify-center pt-1">
               <button
                 onClick={generatePrompt}
                 disabled={!mainImage || isGenerating}
                 className={`min-w-[180px] px-8 py-2.5 md:py-3 rounded-xl font-semibold text-xs tracking-wider uppercase flex items-center justify-center gap-2 transition-all duration-200
                   ${!mainImage || isGenerating
-                    ? 'bg-white/10 text-zinc-400 cursor-not-allowed border border-white/10'
+                    ? 'bg-white/10 text-zinc-500 cursor-not-allowed border border-white/10'
                     : 'bg-white text-black hover:bg-zinc-200 active:scale-[0.99] shadow-lg border border-white font-bold'
                   }`}
               >
@@ -841,9 +810,8 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
             </div>
           </div>
 
-          {/* Generated Output */}
           <div 
-            className={`transition-all duration-600 ease-in-out overflow-hidden ${
+            className={`transition-all duration-500 ease-in-out overflow-hidden ${
               outputPrompt && !isGenerating ? 'max-h-[600px] opacity-100 mt-8 pt-6 border-t border-white/20' : 'max-h-0 opacity-0 mt-0 pt-0'
             }`}
           >
@@ -856,28 +824,26 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                 className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 border
                   ${isCopied 
                     ? 'bg-emerald-500 text-white border-emerald-500' 
-                    : 'bg-white/20 text-white border-white/30 hover:bg-white/30 shadow-xs'}`}
+                    : 'bg-white/20 text-white border-white/30 hover:bg-white/30 shadow-sm'}`}
               >
                 {isCopied ? <Check size="{12}"/> : <Copy size="{12}"/>}
                 <span>{isCopied ? 'Tersalin' : 'Salin'}</span>
               </button>
             </div>
             
-            <div className="bg-black/90 backdrop-blur-xl rounded-2xl p-4 md:p-5 border border-white/25 shadow-2xl">
-              <p className="font-mono text-xs text-zinc-100 leading-relaxed whitespace-pre-wrap selection:bg-white/30 selection:text-white">
+            <div className="bg-black/80 backdrop-blur-xl rounded-2xl p-4 md:p-5 border border-white/20 shadow-2xl">
+              <p className="font-mono text-xs text-zinc-200 leading-relaxed whitespace-pre-wrap selection:bg-white/30 selection:text-white">
                 {outputPrompt}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Minimal Footer */}
         <div className="mt-8 text-white/40 text-[11px] font-medium tracking-wider uppercase">
           Automated Visual Intelligence &bull; {brandName}
         </div>
       </main>
 
-      {/* History Slide-out Drawer */}
       <div 
         className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
           isHistoryOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
@@ -886,7 +852,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
       />
 
       <div 
-        className={`fixed top-0 right-0 h-full w-full max-w-md z-50 bg-[#09090b]/90 backdrop-blur-2xl border-l border-white/20 shadow-2xl transition-transform duration-300 ease-out flex flex-col ${
+        className={`fixed top-0 right-0 h-full w-full max-w-md z-50 bg-[#09090b]/95 backdrop-blur-2xl border-l border-white/20 shadow-2xl transition-transform duration-300 ease-out flex flex-col ${
           isHistoryOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -983,7 +949,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 
                 {item.products && item.products.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-2">
-                    {item.products.map((p, idx) => (
+                    {item.products.map((p: string, idx: number) => (
                       <span key={idx} className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/15 text-white border border-white/20">
                         {p}
                       </span>
@@ -1003,10 +969,9 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
   );
 }
 
-// --- KOMPONEN UTAMA (APP) ---
-export default function App() {
+export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('FONCE');
-  const [generatingTabs, setGeneratingTabs] = useState({});
+  const [generatingTabs, setGeneratingTabs] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const link = document.createElement('link');
@@ -1066,7 +1031,7 @@ export default function App() {
     { id: 'FEEL_ONE', label: 'Feel One' }
   ];
 
-  const handleTabGeneratingChange = (tabId, isGenerating) => {
+  const handleTabGeneratingChange = (tabId: string, isGenerating: boolean) => {
     setGeneratingTabs(prev => ({
       ...prev,
       [tabId]: isGenerating
@@ -1086,7 +1051,6 @@ export default function App() {
         backgroundPosition: 'center top'
       }}
     >
-      {/* Top Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center py-4 px-4 bg-black/40 backdrop-blur-xl border-b border-white/10">
         <div className="flex items-center gap-1.5 md:gap-2 overflow-x-auto hide-scrollbar w-full max-w-4xl justify-start md:justify-center px-2">
           {tabs.map((tab) => {
@@ -1113,10 +1077,8 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Semua Tab tetap ter-mount agar proses generate dapat berjalan serentak 
-          di latar belakang dan tidak ter-reset saat berpindah antar tab */}
       {tabs.map((tab) => (
-        <PromptGeneratorTab brandConfig="{BRANDS[tab.id]}" isActive="{activeTab" key="{tab.id}" onGeneratingStateChange="{(isGen)" tab.id}> handleTabGeneratingChange(tab.id, isGen)}
+        <PromptGeneratorTab brandConfig="{BRANDS[tab.id]}" isActive="{activeTab" key="{tab.id}" onGeneratingStateChange="{(isGen:" tab.id}> handleTabGeneratingChange(tab.id, isGen)}
         />
       ))}
       
