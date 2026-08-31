@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Login from './login-analyze';
+import Login from './Login';
 import Dashboard from './Dashboard';
 
 export default function App() {
