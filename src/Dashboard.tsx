@@ -984,7 +984,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
   );
 }
 
-// --- KOMPONEN UTAMA (APP) ---
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('FONCE');
   const [generatingTabs, setGeneratingTabs] = useState({});
@@ -1010,7 +1009,7 @@ export default function Dashboard() {
         font-family: 'JetBrains Mono', monospace !important;
       }
       .card-shadow-frosted {
-        box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.15), inset 0 1px 2px 0 rgba(255, 255, 255, 0.2);
+        box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.25), inset 0 1px 2px 0 rgba(255, 255, 255, 0.35);
       }
       .custom-scroll::-webkit-scrollbar {
         width: 4px;
@@ -1060,15 +1059,14 @@ export default function Dashboard() {
       style={{
         backgroundColor: '#050505',
         backgroundImage: `
-          linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
+          linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px)
         `,
         backgroundSize: '48px 48px',
         backgroundPosition: 'center top'
       }}
     >
-      {/* Top Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center py-4 px-4 bg-black/50 backdrop-blur-xl border-b border-white/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center py-4 px-4 bg-black/40 backdrop-blur-xl border-b border-white/10">
         <div className="flex items-center gap-1.5 md:gap-2 overflow-x-auto hide-scrollbar w-full max-w-4xl justify-start md:justify-center px-2">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -1085,8 +1083,8 @@ export default function Dashboard() {
                   }`}
               >
                 {isTabGenerating && (
-  <Loader2 size={12} className={`animate-spin ${isActive ? 'text-black' : 'text-amber-400'}`} />
-)}
+                  <Loader2 ${isActive 'text-amber-400'}`} 'text-black' : ? className="{`animate-spin" size="{12}"/>
+                )}
                 <span>{tab.label}</span>
               </button>
             );
@@ -1094,16 +1092,10 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      {/* Render Semua Tab Secara Paralel */}
-      {/* Render Semua Tab Secara Paralel */}
-{tabs.map((tab) => (
-  <PromptGeneratorTab 
-    key={tab.id}
-    brandConfig={BRANDS[tab.id]} 
-    isActive={activeTab === tab.id} 
-    onGeneratingStateChange={(isGen) => handleTabGeneratingChange(tab.id, isGen)}
-  />
-))}
+      {tabs.map((tab) => (
+        <PromptGeneratorTab brandConfig="{BRANDS[tab.id]}" isActive="{activeTab" key="{tab.id}" onGeneratingStateChange="{(isGen)" tab.id}> handleTabGeneratingChange(tab.id, isGen)}
+        />
+      ))}
       
     </div>
   );
