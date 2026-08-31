@@ -14,10 +14,10 @@ import {
   Clock
 } from 'lucide-react';
 
-// API Key disediakan oleh environment (Bisa diganti dengan import.meta.env.VITE_GEMINI_API_KEY)
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY || ""; 
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || ""; // Gunakan env variable untuk Vercel
 
 // --- DATA DICTIONARIES ---
+
 const FONCE_PRODUCT_DETAILS: Record<string, string> = {
   "Wild Garden": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Wild Garden" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Winter Bloom": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Winter Bloom" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
@@ -91,7 +91,7 @@ const LOCK_OPTIONS = [
   "Framing", "Mood"
 ];
 
-const BRANDS = {
+const BRANDS: Record<string, any> = {
   FONCE: {
     name: "Foncé",
     details: FONCE_PRODUCT_DETAILS,
@@ -158,7 +158,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
   const [isDraggingMain, setIsDraggingMain] = useState(false);
   const [isDraggingChar, setIsDraggingChar] = useState(false);
   
-  // State for products and filtering
+  // State for products and filtering (khusus Feel One)
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [activeCategoryTab, setActiveCategoryTab] = useState<'ALL' | 'ADULT' | 'KIDS'>('ALL');
 
@@ -182,6 +182,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [copiedHistoryId, setCopiedHistoryId] = useState<string | null>(null);
 
+  // Beritahu parent component jika tab ini sedang generating
   useEffect(() => {
     if (onGeneratingStateChange) {
       onGeneratingStateChange(isGenerating);
@@ -196,6 +197,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     }
   }, [history, storageKey]);
 
+  // Mouse position state for smooth brush glow
   const [cursorPos, setCursorPos] = useState({ x: -1000, y: -1000 });
   const [smoothPos, setSmoothPos] = useState({ x: -1000, y: -1000 });
 
@@ -228,7 +230,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
 
     requestRef.current = requestAnimationFrame(animateGlow);
     return () => {
-        if(requestRef.current) cancelAnimationFrame(requestRef.current);
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
   }, [cursorPos, isActive]);
 
@@ -646,8 +648,8 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                     { id: 'KIDS', label: 'Kids' }
                   ].map((tab) => {
                     const isActive = activeCategoryTab === tab.id;
-                    const adultCount = selectedProducts.filter(p => Object.keys(adultProducts || {}).includes(p)).length;
-                    const kidsCount = selectedProducts.filter(p => Object.keys(kidsProducts || {}).includes(p)).length;
+                    const adultCount = selectedProducts.filter(p => Object.keys(adultProducts).includes(p)).length;
+                    const kidsCount = selectedProducts.filter(p => Object.keys(kidsProducts).includes(p)).length;
                     const badge = tab.id === 'ADULT' ? adultCount : tab.id === 'KIDS' ? kidsCount : selectedProducts.length;
 
                     return (
@@ -689,7 +691,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                           </div>
                         )}
                         <div className="flex flex-wrap gap-1.5">
-                          {Object.keys(adultProducts || {}).map((prod) => {
+                          {Object.keys(adultProducts).map((prod) => {
                             const isSelected = selectedProducts.includes(prod);
                             return (
                               <button
@@ -720,7 +722,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                           </div>
                         )}
                         <div className="flex flex-wrap gap-1.5">
-                          {Object.keys(kidsProducts || {}).map((prod) => {
+                          {Object.keys(kidsProducts).map((prod) => {
                             const isSelected = selectedProducts.includes(prod);
                             return (
                               <button
@@ -1116,7 +1118,7 @@ export default function Dashboard() {
       {/* Semua Tab tetap ter-mount agar proses generate dapat berjalan serentak 
           di latar belakang dan tidak ter-reset saat berpindah antar tab */}
       {tabs.map((tab) => (
-        <PromptGeneratorTab BRANDS]} as brandConfig="{BRANDS[tab.id" isActive="{activeTab" key="{tab.id}" keyof onGeneratingStateChange="{(isGen:" tab.id} typeof> handleTabGeneratingChange(tab.id, isGen)}
+        <PromptGeneratorTab brandConfig="{BRANDS[tab.id]}" isActive="{activeTab" key="{tab.id}" onGeneratingStateChange="{(isGen:" tab.id}> handleTabGeneratingChange(tab.id, isGen)}
         />
       ))}
       
