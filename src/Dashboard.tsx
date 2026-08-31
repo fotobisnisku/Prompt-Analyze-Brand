@@ -26,7 +26,7 @@ const FONCE_PRODUCT_DETAILS: Record<string, string> = {
   "Vanilla & Salt": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Vanilla & Salt" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Tabac Vanille": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Tabac Vanille" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Santal": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Santal" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
-  "Cloud Bath": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Cloud Bath" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible internal.`,
+  "Cloud Bath": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Cloud Bath" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Tuberose De Noir": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Tuberose De Noir" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "La Nuit": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "La Nuit" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Casanova": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Casanova" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
@@ -345,7 +345,6 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
       if (!res.ok) throw new Error(data.error?.message || 'Error API KIE');
       return { candidates: [{ content: { parts: [{ text: data.choices?.[0]?.message?.content }] } }] };
     } else {
-      // Fallback generator lokal jika API Key belum dipasang di environment
       await new Promise(resolve => setTimeout(resolve, 2000));
       const fallbackPrompt = `Commercial luxury photography of ${brandName} featuring ${selectedProducts.map(p => `"${p}" (${productDetailsMap[p] || 'Premium Glass Edition'})`).join(' and ')}, arranged in refined editorial studio setting, ${lockedParams.length > 0 ? `locked attributes: ${lockedParams.join(', ')}, ` : ''}${additionalText ? `creative direction: ${additionalText}, ` : ''}soft volumetric rim lighting, shallow depth of field, ultra-high resolution 8k, shot on Hasselblad H6D-100c --ar 16:9 --v 6.0.`;
       return { candidates: [{ content: { parts: [{ text: fallbackPrompt }] } }] };
@@ -626,7 +625,7 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
                     { id: 'ADULT', label: 'Adult' },
                     { id: 'KIDS', label: 'Kids' }
                   ].map((tab) => {
-                    const isActive = activeCategoryTab === tab.id;
+                    const isActiveTab = activeCategoryTab === tab.id;
                     const adultCount = selectedProducts.filter(p => Object.keys(adultProducts || {}).includes(p)).length;
                     const kidsCount = selectedProducts.filter(p => Object.keys(kidsProducts || {}).includes(p)).length;
                     const badge = tab.id === 'ADULT' ? adultCount : tab.id === 'KIDS' ? kidsCount : selectedProducts.length;
@@ -637,7 +636,7 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
                         type="button"
                         onClick={() => setActiveCategoryTab(tab.id as any)}
                         className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold tracking-wide uppercase transition-all duration-200 flex items-center justify-center gap-1.5
-                          ${isActive 
+                          ${isActiveTab 
                             ? 'bg-white text-black shadow-sm' 
                             : 'text-zinc-400 hover:text-white hover:bg-white/10'
                           }`}
@@ -645,7 +644,7 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
                         <span>{tab.label}</span>
                         {badge > 0 && (
                           <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                            isActive ? 'bg-black text-white' : 'bg-white/20 text-white'
+                            isActiveTab ? 'bg-black text-white' : 'bg-white/20 text-white'
                           }`}>
                             {badge}
                           </span>
@@ -1090,7 +1089,7 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      {/* Semua Tab tetap di-render agar state tidak hilang ketika ganti tab */}
+      {/* Render Tab Generator */}
       {tabs.map((tab) => (
         <PromptGeneratorTab BRANDS]} as brandConfig="{BRANDS[tab.id" isActive="{activeTab" key="{tab.id}" keyof onGeneratingStateChange="{(isGen:" tab.id} typeof> handleTabGeneratingChange(tab.id, isGen)}
         />
