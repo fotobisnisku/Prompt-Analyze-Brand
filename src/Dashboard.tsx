@@ -14,6 +14,10 @@ import {
   Clock
 } from 'lucide-react';
 
+// API Key disediakan oleh environment (Bisa diganti dengan import.meta.env.VITE_GEMINI_API_KEY)
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || ""; 
+
+// --- DATA DICTIONARIES ---
 const FONCE_PRODUCT_DETAILS: Record<string, string> = {
   "Wild Garden": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Wild Garden" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Winter Bloom": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Winter Bloom" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
@@ -26,7 +30,7 @@ const FONCE_PRODUCT_DETAILS: Record<string, string> = {
   "Vanilla & Salt": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Vanilla & Salt" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Tabac Vanille": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Tabac Vanille" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Santal": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Santal" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
-  "Cloud Bath": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Cloud Bath" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
+  "Cloud Bath": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Cloud Bath" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible internal.`,
   "Tuberose De Noir": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Tuberose De Noir" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "La Nuit": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "La Nuit" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Casanova": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Casanova" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
@@ -105,7 +109,7 @@ const BRANDS = {
     details: FEEL_ONE_PRODUCT_DETAILS,
     storageKey: "feelone_prompt_history",
     specRule: "Bottle geometry & glass shape (e.g. square-shaped with rounded corners & embossed dotted texture for ADULT series, or glossy transparent cylindrical bottle with thick glass base for KIDS series). Cap shape & finish (e.g. spherical cap / ball cap with exact plastic color and gloss). Liquid translucency, exact liquid color, and internal transparent pump mechanism. ALL typography, quotes, cartoon illustrations / graphics, and monogram logos verbatim as provided. Bottom markings and size designations ('eau de parfum / extrait de parfum', '35 ml', etc.).",
-    hasCategories: true,
+    hasCategories: true, // Flag khusus untuk Feel One agar merender filter kategori
     adultProducts: FEEL_ONE_ADULT_PRODUCTS,
     kidsProducts: FEEL_ONE_KIDS_PRODUCTS
   }
@@ -144,6 +148,7 @@ FINAL PROMPT FORMAT:
 [Shot Type] of [Subject: Full Unabridged Product Identity & Exact Specifications for ALL selected products arranged together], [Pose + Framing + Composition], in/against [Environment + Background], color palette – [Dominant + Accent + Shadow Tone + Highlight Tone], [Surface Finish], [Creative Direction], Atmosphere – [Mood], [Symbolism - if relevant], hyperrealistic detail, ultra sharp focus, [Lighting + Aesthetic], shot on [Camera + Lens + Technical].
 `;
 
+// --- COMPONENT DINAMIS TAB UTAMA ---
 function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: any) {
   const { name: brandName, details: productDetailsMap, storageKey, specRule, hasCategories, adultProducts, kidsProducts } = brandConfig;
   const brandProducts = Object.keys(productDetailsMap);
@@ -153,6 +158,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
   const [isDraggingMain, setIsDraggingMain] = useState(false);
   const [isDraggingChar, setIsDraggingChar] = useState(false);
   
+  // State for products and filtering
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [activeCategoryTab, setActiveCategoryTab] = useState<'ALL' | 'ADULT' | 'KIDS'>('ALL');
 
@@ -185,7 +191,9 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
   useEffect(() => {
     try {
       localStorage.setItem(storageKey, JSON.stringify(history));
-    } catch (e) {}
+    } catch (e) {
+      console.error("Gagal menyimpan riwayat", e);
+    }
   }, [history, storageKey]);
 
   const [cursorPos, setCursorPos] = useState({ x: -1000, y: -1000 });
@@ -220,7 +228,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
 
     requestRef.current = requestAnimationFrame(animateGlow);
     return () => {
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+        if(requestRef.current) cancelAnimationFrame(requestRef.current);
     };
   }, [cursorPos, isActive]);
 
@@ -243,7 +251,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     return () => clearInterval(interval);
   }, [isGenerating, brandName]);
 
-  const processImageFile = (file: File, setImageFn: (data: any) => void) => {
+  const processImageFile = (file: File, setImageFn: any) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
       setError('Harap unggah file gambar yang valid.');
@@ -266,26 +274,26 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     reader.readAsDataURL(file);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setImageFn: (data: any) => void) => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setImageFn: any) => {
     const file = e.target.files?.[0];
     if (file) {
       processImageFile(file, setImageFn);
     }
   };
 
-  const handleDragOver = (e: React.DragEvent, setDragState: (val: boolean) => void) => {
+  const handleDragOver = (e: React.DragEvent, setDragState: any) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(true);
   };
 
-  const handleDragLeave = (e: React.DragEvent, setDragState: (val: boolean) => void) => {
+  const handleDragLeave = (e: React.DragEvent, setDragState: any) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(false);
   };
 
-  const handleDrop = (e: React.DragEvent, setImageFn: (data: any) => void, setDragState: (val: boolean) => void) => {
+  const handleDrop = (e: React.DragEvent, setImageFn: any, setDragState: any) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(false);
@@ -295,7 +303,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     }
   };
 
-  const toggleSelection = (item: string, list: string[], setList: (items: string[]) => void) => {
+  const toggleSelection = (item: string, list: string[], setList: any) => {
     if (list.includes(item)) {
       setList(list.filter(i => i !== item));
     } else {
@@ -305,49 +313,45 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
 
   const handleCopy = () => {
     if (!outputPrompt) return;
-    navigator.clipboard.writeText(outputPrompt);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+    const textArea = document.createElement("textarea");
+    textArea.value = outputPrompt;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (e) {
+      console.error("Gagal menyalin teks", e);
+    }
+    document.body.removeChild(textArea);
   };
 
-  const callAIAPI = async (payload: any, maxRetries = 3) => {
-    const geminiKey = (import.meta.env.VITE_GEMINI_API_KEY as string) || localStorage.getItem('GEMINI_API_KEY');
-    const kieKey = (import.meta.env.VITE_KIE_FALLBACK_KEY as string) || localStorage.getItem('KIE_API_KEY');
+  const callGeminiWithBackoff = async (payload: any, maxRetries = 5) => {
+    const delays = [1000, 2000, 4000, 8000, 16000];
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
-    if (geminiKey) {
-      const delays = [1000, 2000, 4000];
-      for (let attempt = 0; attempt <= maxRetries; attempt++) {
-        try {
-          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-          const data = await response.json();
-          if (response.ok) return data;
-          if (attempt === maxRetries) throw new Error(data.error?.message || 'Gagal memproses gambar via Gemini.');
-        } catch (err) {
-          if (attempt === maxRetries) throw err;
+        const data = await response.json();
+
+        if (response.ok) {
+          return data;
         }
-        await new Promise(resolve => setTimeout(resolve, delays[attempt] || 1000));
+
+        if (attempt === maxRetries) {
+          throw new Error(data.error?.message || 'Terjadi gangguan saat memproses gambar.');
+        }
+      } catch (err) {
+        if (attempt === maxRetries) {
+          throw err;
+        }
       }
-    } else if (kieKey) {
-      const messages = [
-        { role: "system", content: getSystemPrompt(brandName, specRule) },
-        { role: "user", content: payload.userPromptText }
-      ];
-      const res = await fetch('https://api.kie.ai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${kieKey}` },
-        body: JSON.stringify({ model: 'kie-vision-model', messages, temperature: 0.7 })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error?.message || 'Error API KIE');
-      return { candidates: [{ content: { parts: [{ text: data.choices?.[0]?.message?.content }] } }] };
-    } else {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      const fallbackPrompt = `Commercial luxury photography of ${brandName} featuring ${selectedProducts.map(p => `"${p}" (${productDetailsMap[p] || 'Premium Glass Edition'})`).join(' and ')}, arranged in refined editorial studio setting, ${lockedParams.length > 0 ? `locked attributes: ${lockedParams.join(', ')}, ` : ''}${additionalText ? `creative direction: ${additionalText}, ` : ''}soft volumetric rim lighting, shallow depth of field, ultra-high resolution 8k, shot on Hasselblad H6D-100c --ar 16:9 --v 6.0.`;
-      return { candidates: [{ content: { parts: [{ text: fallbackPrompt }] } }] };
+      await new Promise(resolve => setTimeout(resolve, delays[attempt] || 1000));
     }
   };
 
@@ -364,12 +368,12 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     try {
       const productCount = selectedProducts.length;
       const productLibraryText = productCount > 0 
-        ? selectedProducts.map((name, i) => `--- PRODUCT ${i + 1} OF ${productCount}: ${name} ---\nFULL PRODUCT SPECIFICATION:\n${productDetailsMap[name] || name}`).join('\n\n')
+        ? selectedProducts.map((name, i) => `--- PRODUCT ${i + 1} OF ${productCount}: ${name} ---\nFULL PRODUCT SPECIFICATION (MUST BE FULLY WRITTEN IN THE PROMPT SUBJECT):\n${productDetailsMap[name] || name}`).join('\n\n')
         : 'None specified.';
 
       const userInstructionText = `
 [MANDATORY PRODUCT COUNT: ${productCount}]
-[USER PRODUCT LIBRARY]:
+[USER PRODUCT LIBRARY - EVERY SPECIFICATION BELOW MUST BE FULLY AND EXHAUSTIVELY INCLUDED IN THE FINAL PROMPT SUBJECT WITHOUT SUMMARIZATION]:
 ${productLibraryText}
 
 [ADDITIONAL TEXT / PROMPT]
@@ -380,7 +384,9 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
       `;
 
       const promptRequestText = productCount > 0
-        ? `Analyze the attached MAIN REFERENCE IMAGE based on the system instructions. Exactly ${productCount} product(s) are selected (${selectedProducts.join(', ')}). Embed the full physical specification of each product into the SUBJECT section.`
+        ? `Analyze the attached MAIN REFERENCE IMAGE based on the system instructions.
+CRITICAL ENFORCEMENT: Exactly ${productCount} product(s) are selected (${selectedProducts.join(', ')}). 
+You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH selected product into the SUBJECT section of your output prompt. DO NOT summarize or omit any detail.`
         : `Analyze the attached MAIN REFERENCE IMAGE based on the system instructions and construct the photography prompt.`;
 
       const contents: any[] = [
@@ -404,13 +410,12 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
         contents,
         systemInstruction: {
           parts: [{ text: getSystemPrompt(brandName, specRule) }]
-        },
-        userPromptText: `${promptRequestText}\n\n${userInstructionText}`
+        }
       };
 
-      const data = await callAIAPI(payload);
-      const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      const data = await callGeminiWithBackoff(payload);
 
+      const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (generatedText) {
         const cleanText = generatedText.replace(/```[a-z]*\n?/gi, '').trim();
         setOutputPrompt(cleanText);
@@ -437,16 +442,31 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
   };
 
   const copyHistoryPrompt = (item: any) => {
-    navigator.clipboard.writeText(item.prompt);
-    setCopiedHistoryId(item.id);
-    setTimeout(() => setCopiedHistoryId(null), 2000);
+    const textArea = document.createElement("textarea");
+    textArea.value = item.prompt;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      setCopiedHistoryId(item.id);
+      setTimeout(() => setCopiedHistoryId(null), 2000);
+    } catch (e) {
+      console.error("Gagal menyalin riwayat", e);
+    }
+    document.body.removeChild(textArea);
   };
 
   const restoreHistoryItem = (item: any) => {
     setOutputPrompt(item.prompt);
-    if (item.products && item.products.length > 0) setSelectedProducts(item.products);
-    if (item.locks) setLockedParams(item.locks);
-    if (item.additionalText) setAdditionalText(item.additionalText);
+    if (item.products && item.products.length > 0) {
+      setSelectedProducts(item.products);
+    }
+    if (item.locks) {
+      setLockedParams(item.locks);
+    }
+    if (item.additionalText) {
+      setAdditionalText(item.additionalText);
+    }
     setIsHistoryOpen(false);
   };
 
@@ -617,7 +637,7 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
                 )}
               </div>
 
-              {/* Tampilkan filter kategori jika hasCategories = true */}
+              {/* Tampilkan filter kategori JIKA flag hasCategories = true (kasus Feel One) */}
               {hasCategories && (
                 <div className="flex items-center gap-1.5 p-1 bg-black/35 rounded-xl border border-white/15 backdrop-blur-md mb-3">
                   {[
@@ -625,7 +645,7 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
                     { id: 'ADULT', label: 'Adult' },
                     { id: 'KIDS', label: 'Kids' }
                   ].map((tab) => {
-                    const isActiveTab = activeCategoryTab === tab.id;
+                    const isActive = activeCategoryTab === tab.id;
                     const adultCount = selectedProducts.filter(p => Object.keys(adultProducts || {}).includes(p)).length;
                     const kidsCount = selectedProducts.filter(p => Object.keys(kidsProducts || {}).includes(p)).length;
                     const badge = tab.id === 'ADULT' ? adultCount : tab.id === 'KIDS' ? kidsCount : selectedProducts.length;
@@ -636,7 +656,7 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
                         type="button"
                         onClick={() => setActiveCategoryTab(tab.id as any)}
                         className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold tracking-wide uppercase transition-all duration-200 flex items-center justify-center gap-1.5
-                          ${isActiveTab 
+                          ${isActive 
                             ? 'bg-white text-black shadow-sm' 
                             : 'text-zinc-400 hover:text-white hover:bg-white/10'
                           }`}
@@ -644,7 +664,7 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
                         <span>{tab.label}</span>
                         {badge > 0 && (
                           <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                            isActiveTab ? 'bg-black text-white' : 'bg-white/20 text-white'
+                            isActive ? 'bg-black text-white' : 'bg-white/20 text-white'
                           }`}>
                             {badge}
                           </span>
@@ -655,10 +675,11 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
                 </div>
               )}
 
-              {/* Rendering list produk */}
-              <div className="max-h-48 overflow-y-auto custom-scroll space-y-3 bg-black/20 rounded-2xl border border-white/10 p-2.5">
+              {/* Rendering list produk berdasarkan kategori aktif atau semua (jika bukan Feel One) */}
+              <div className="max-h-48 overflow-y-auto custom-scroll p-1 space-y-3 bg-black/20 rounded-2xl border border-white/10 p-2.5">
                 {hasCategories ? (
                   <>
+                    {/* Bagian Adult Series */}
                     {(activeCategoryTab === 'ALL' || activeCategoryTab === 'ADULT') && (
                       <div>
                         {activeCategoryTab === 'ALL' && (
@@ -689,6 +710,7 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
                       </div>
                     )}
 
+                    {/* Bagian Kids Series */}
                     {(activeCategoryTab === 'ALL' || activeCategoryTab === 'KIDS') && (
                       <div>
                         {activeCategoryTab === 'ALL' && (
@@ -720,6 +742,7 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
                     )}
                   </>
                 ) : (
+                  // Rendering normal untuk brand tanpa kategori (Fonce, Predire)
                   <div className="flex flex-wrap gap-1.5">
                     {brandProducts.map((prod) => {
                       const isSelected = selectedProducts.includes(prod);
@@ -743,7 +766,7 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
               </div>
             </div>
 
-            {/* Lock Parameters */}
+            {/* Smooth Disappearing & Appearing Lock Parameters */}
             <div 
               className={`transition-all duration-500 ease-in-out overflow-hidden ${
                 selectedProducts.length > 0 ? 'max-h-48 opacity-100 pt-1' : 'max-h-0 opacity-0 pt-0'
@@ -980,6 +1003,7 @@ ${lockedParams.length > 0 ? lockedParams.map(p => `Lock ${p.toLowerCase()}`).joi
   );
 }
 
+// --- KOMPONEN UTAMA (APP) ---
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('FONCE');
   const [generatingTabs, setGeneratingTabs] = useState<Record<string, boolean>>({});
@@ -1089,11 +1113,13 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      {/* Render Tab Generator */}
+      {/* Semua Tab tetap ter-mount agar proses generate dapat berjalan serentak 
+          di latar belakang dan tidak ter-reset saat berpindah antar tab */}
       {tabs.map((tab) => (
         <PromptGeneratorTab BRANDS]} as brandConfig="{BRANDS[tab.id" isActive="{activeTab" key="{tab.id}" keyof onGeneratingStateChange="{(isGen:" tab.id} typeof> handleTabGeneratingChange(tab.id, isGen)}
         />
       ))}
+      
     </div>
   );
 }
