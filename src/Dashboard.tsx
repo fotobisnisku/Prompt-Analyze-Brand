@@ -1,20 +1,81 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  UploadCloud, 
-  Image as ImageIcon, 
-  X, 
-  Lock, 
-  Check, 
-  Copy, 
-  AlertCircle, 
-  Loader2,
-  History,
-  Trash2,
-  RotateCcw,
-  Clock
-} from 'lucide-react';
 
 const apiKey = import.meta.env?.VITE_GEMINI_API_KEY || ""; 
+
+// --- INLINE SVG ICONS ---
+const Icons = {
+  History: ({ className = "w-4 h-4" }: { className?: string }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  AlertCircle: ({ className = "w-4 h-4" }: { className?: string }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="8" x2="12" y2="12" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+  ),
+  UploadCloud: ({ className = "w-5 h-5" }: { className?: string }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+    </svg>
+  ),
+  Image: ({ className = "w-5 h-5" }: { className?: string }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <polyline points="21 15 16 10 5 21" />
+    </svg>
+  ),
+  X: ({ className = "w-4 h-4" }: { className?: string }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  ),
+  Lock: ({ className = "w-3.5 h-3.5" }: { className?: string }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0110 0v4" />
+    </svg>
+  ),
+  Check: ({ className = "w-3 h-3" }: { className?: string }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  ),
+  Copy: ({ className = "w-3.5 h-3.5" }: { className?: string }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+    </svg>
+  ),
+  Loader: ({ className = "w-4 h-4" }: { className?: string }) => (
+    <svg className={`${className} animate-spin`} fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+  ),
+  Trash: ({ className = "w-3.5 h-3.5" }: { className?: string }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+    </svg>
+  ),
+  RotateCcw: ({ className = "w-3.5 h-3.5" }: { className?: string }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <polyline points="1 4 1 10 7 10" />
+      <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
+    </svg>
+  ),
+  Clock: ({ className = "w-6 h-6" }: { className?: string }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  )
+};
 
 // --- DATA DICTIONARIES ---
 
@@ -48,7 +109,7 @@ const PREDIRE_PRODUCT_DETAILS: Record<string, string> = {
   "Orange Poivree": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of transparent cylindrical glass with a thick orange-colored base and thick orange glass walls. Inside, the perfume liquid is a clear transparent orange, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Orange Poivree” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Delish Library": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of matte white cylindrical glass with a thick base and thick glass walls. Solid black text is directly printed on the glass bottle: “Predire” at the top, “Delish Library” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Honey Of The Valley": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of honey-yellow cylindrical glass with a thick honey-yellow base and thick glass walls. Inside, the perfume liquid is a clear transparent honey yellow, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Honey Of The Valley” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
-  "Forbidden Iris": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of transparent cylindrical glass with a thick base and thick glass walls in a bright bluish-purple tone. Inside, the perfume liquid is a clear transparent blue, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Forbidden Iris” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
+  "Forbidden Iris": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of transparent cylindrical glass with a thick base and thick glass walls in a bright bluish-purple tone. Inside, the perfume liquid is a clear transparent blue, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Forbidden Iris” in the center, dan “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Caribbean Sunset": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of transparent cylindrical glass with a thick dark brown base and thick dark brown glass walls. Inside, the perfume liquid is brown, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Caribbean Sunset” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Or Noir Absolu": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of fully glossy black cylindrical glass. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Or Noir Absolu” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`
 };
@@ -72,7 +133,7 @@ const FEEL_ONE_KIDS_PRODUCTS: Record<string, string> = {
   "Little Doctor": `A bottle of perfume with a perfect glossy pink plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear light pink liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Little Doctor, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Magic Unicorn": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear light purple liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Magic Unicorn, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Mini Elephant": `A bottle of perfume with a perfect glossy blue plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear blue liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Mini Elephant, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
-  "Police Hero": `A bottle of perfume with a perfect glossy black plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear light blue liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Police Hero, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", dan a small circular monogram logo.`,
+  "Police Hero": `A bottle of perfume with a perfect glossy black plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear light blue liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Police Hero, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Safari Giraffe": `A bottle of perfume with a perfect glossy black plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear yellow liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Safari Giraffe, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Sea Mermaid": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear sea blue liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Sea Mermaid, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Sky Pilot": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear light blue liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Sky Pilot, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
@@ -477,7 +538,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
           className="group relative flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-xl border border-white/20 text-white text-xs font-semibold tracking-wide transition-all duration-300 shadow-lg hover:border-white/40"
           title="Buka Riwayat Prompt"
         >
-          <History className="text-zinc-300 group-hover:text-white transition-colors" size="{15}"/>
+          <Icons.History className="w-4 h-4 text-zinc-300 group-hover:text-white transition-colors"/>
           <span className="hidden sm:inline">History</span>
           {history.length > 0 && (
             <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-white text-black rounded-full shadow-sm">
@@ -502,7 +563,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
           
           <div className={`transition-all duration-500 ease-in-out overflow-hidden ${error ? 'max-h-24 opacity-100 mb-6' : 'max-h-0 opacity-0 mb-0'}`}>
             <div className="bg-red-500/20 text-red-200 p-3.5 rounded-2xl flex items-center gap-3 border border-red-400/30 text-xs font-semibold backdrop-blur-md">
-              <AlertCircle className="shrink-0 text-red-400" size="{16}"/>
+              <Icons.AlertCircle className="shrink-0 w-4 h-4 text-red-400"/>
               <span>{error}</span>
             </div>
           </div>
@@ -538,14 +599,14 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                           className="bg-white text-zinc-900 p-2 rounded-full hover:bg-red-500 hover:text-white transition-all shadow-md"
                           title="Hapus gambar"
                         >
-                          <X size="{16}"/>
+                          <Icons.X className="w-4 h-4"/>
                         </button>
                       </div>
                     </>
                   ) : (
                     <div className="text-center p-4 flex flex-col items-center">
                       <div className="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-white mb-2.5 group-hover:scale-105 transition-all shadow-sm">
-                        <UploadCloud size="{18}"/>
+                        <Icons.UploadCloud className="w-5 h-5"/>
                       </div>
                       <p className="text-xs font-bold text-white">Unggah Gambar Utama</p>
                       <p className="text-[10px] text-zinc-400 mt-0.5">Drag & drop atau klik (Maks. 5MB)</p>
@@ -584,14 +645,14 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                           className="bg-white text-zinc-900 p-2 rounded-full hover:bg-red-500 hover:text-white transition-all shadow-md"
                           title="Hapus gambar"
                         >
-                          <X size="{16}"/>
+                          <Icons.X className="w-4 h-4"/>
                         </button>
                       </div>
                     </>
                   ) : (
                     <div className="text-center p-4 flex flex-col items-center">
                       <div className="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-zinc-200 mb-2.5 group-hover:scale-105 transition-all shadow-sm">
-                        <ImageIcon size="{18}"/>
+                        <Icons.Image className="w-5 h-5"/>
                       </div>
                       <p className="text-xs font-bold text-zinc-200">Model / Karakter</p>
                       <p className="text-[10px] text-zinc-400 mt-0.5">Drag & drop atau klik (Opsional)</p>
@@ -745,7 +806,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
             >
               <div className="p-4 rounded-2xl bg-black/35 border border-white/20 backdrop-blur-md shadow-sm">
                 <div className="flex items-center gap-1.5 mb-2.5">
-                  <Lock className="text-zinc-300" size="{13}"/>
+                  <Icons.Lock className="w-3.5 h-3.5 text-zinc-300"/>
                   <span className="text-xs font-bold text-white tracking-wide uppercase">
                     Lock Parameters
                   </span>
@@ -767,7 +828,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                             : 'bg-white/10 text-zinc-300 border-white/15 hover:border-white/30 hover:bg-white/20'
                           }`}
                       >
-                        {isLocked && <Check className="stroke-[3]" size="{11}"/>}
+                        {isLocked && <Icons.Check className="w-3 h-3 stroke-[3]"/>}
                         {lock}
                       </button>
                     );
@@ -800,7 +861,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
               >
                 {isGenerating ? (
                   <>
-                    <Loader2 className="animate-spin text-black" size="{14}"/>
+                    <Icons.Loader className="w-4 h-4 text-black"/>
                     <span className="tracking-wider uppercase text-black font-bold">Process</span>
                   </>
                 ) : (
@@ -826,7 +887,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                     ? 'bg-emerald-500 text-white border-emerald-500' 
                     : 'bg-white/20 text-white border-white/30 hover:bg-white/30 shadow-sm'}`}
               >
-                {isCopied ? <Check size="{12}"/> : <Copy size="{12}"/>}
+                {isCopied ? <Icons.Check className="w-3.5 h-3.5"/> : <Icons.Copy className="w-3.5 h-3.5"/>}
                 <span>{isCopied ? 'Tersalin' : 'Salin'}</span>
               </button>
             </div>
@@ -859,7 +920,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
         <div className="p-5 border-b border-white/15 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white">
-              <History size="{16}"/>
+              <Icons.History className="w-4 h-4"/>
             </div>
             <div>
               <h2 className="text-sm font-bold text-white tracking-wide uppercase">Prompt History</h2>
@@ -874,7 +935,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                 className="p-2 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
                 title="Hapus Semua Riwayat"
               >
-                <Trash2 size="{16}"/>
+                <Icons.Trash className="w-4 h-4"/>
               </button>
             )}
             <button
@@ -882,7 +943,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
               className="p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-xl transition-all"
               title="Tutup Panel"
             >
-              <X size="{18}"/>
+              <Icons.X className="w-4 h-4"/>
             </button>
           </div>
         </div>
@@ -891,7 +952,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
           {history.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-6 text-zinc-400">
               <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3 text-zinc-500">
-                <Clock size="{24}"/>
+                <Icons.Clock className="w-6 h-6"/>
               </div>
               <p className="text-xs font-semibold text-zinc-300">Belum Ada Riwayat</p>
               <p className="text-[11px] text-zinc-500 mt-1 max-w-[220px]">
@@ -928,21 +989,21 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                       }`}
                       title="Salin Prompt"
                     >
-                      {copiedHistoryId === item.id ? <Check size="{12}"/> : <Copy size="{12}"/>}
+                      {copiedHistoryId === item.id ? <Icons.Check className="w-3 h-3"/> : <Icons.Copy className="w-3 h-3"/>}
                     </button>
                     <button
                       onClick={() => restoreHistoryItem(item)}
                       className="p-1.5 bg-white/10 text-zinc-200 hover:text-white hover:bg-white/20 border border-white/15 rounded-lg transition-all"
                       title="Terapkan ke Layar Utama"
                     >
-                      <RotateCcw size="{12}"/>
+                      <Icons.RotateCcw className="w-3 h-3"/>
                     </button>
                     <button
                       onClick={() => setHistory(prev => prev.filter(i => i.id !== item.id))}
                       className="p-1.5 bg-white/5 text-zinc-400 hover:text-red-400 hover:bg-red-500/15 border border-white/10 rounded-lg transition-all"
                       title="Hapus Item"
                     >
-                      <Trash2 size="{12}"/>
+                      <Icons.Trash className="w-3 h-3"/>
                     </button>
                   </div>
                 </div>
@@ -1068,7 +1129,7 @@ export default function Dashboard() {
                   }`}
               >
                 {isTabGenerating && (
-                  <Loader2 ${isActive 'text-amber-400'}`} 'text-black' : ? className="{`animate-spin" size="{12}"/>
+                  <Icons.Loader ${isActive 'text-amber-400'}`} 'text-black' : ? className="{`w-3" h-3/>
                 )}
                 <span>{tab.label}</span>
               </button>
