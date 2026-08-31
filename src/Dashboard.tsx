@@ -14,10 +14,9 @@ import {
   Clock
 } from 'lucide-react';
 
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY || ""; // Gunakan env variable untuk Vercel
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || ""; // API Key disediakan oleh environment
 
 // --- DATA DICTIONARIES ---
-
 const FONCE_PRODUCT_DETAILS: Record<string, string> = {
   "Wild Garden": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Wild Garden" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Winter Bloom": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Winter Bloom" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
@@ -307,7 +306,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
 
   const toggleSelection = (item: string, list: string[], setList: any) => {
     if (list.includes(item)) {
-      setList(list.filter(i => i !== item));
+      setList(list.filter((i: string) => i !== item));
     } else {
       setList([...list, item]);
     }
