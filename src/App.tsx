@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Login from './Login';
+import Login from './login-analyze';
 import Dashboard from './Dashboard';
 
 export default function App() {
@@ -11,6 +11,5 @@ export default function App() {
     return () => window.removeEventListener('popstate', onLocationChange);
   }, []);
 
-  // Jika URL adalah /dashboard, tampilkan Dashboard, jika tidak tampilkan Login
   return currentPath === '/dashboard' ? <Dashboard /> : <Login />;
 }
