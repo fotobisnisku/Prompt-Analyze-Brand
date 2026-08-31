@@ -1,18 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  Mail, 
-  Lock, 
-  ArrowRight, 
-  Loader2, 
-  AlertCircle,
-  CheckCircle2,
-  Eye,
-  EyeOff
-} from 'lucide-react';
+import { Mail, Lock, ArrowRight, Loader2, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function FonceLogin() {
@@ -94,7 +85,7 @@ export default function FonceLogin() {
       } else if (data.user) {
         setSuccess('Access granted. Redirecting to dashboard...');
         setTimeout(() => {
-          window.location.href = '/dashboard'; // Redirect URL sesuaikan dengan routing Anda
+          window.location.href = '/dashboard';
         }, 1000);
       }
     } catch (err) {
@@ -128,12 +119,8 @@ export default function FonceLogin() {
           <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-semibold tracking-widest uppercase mb-4 shadow-sm">
             <span>FOTOBISNISKU</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-            Welcome Back
-          </h1>
-          <p className="text-zinc-400 text-sm mt-3 font-medium">
-            Sign in to access the visual analysis system
-          </p>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Welcome Back</h1>
+          <p className="text-zinc-400 text-sm mt-3 font-medium">Sign in to access the visual analysis system</p>
         </div>
 
         <div className="w-full bg-white/25 backdrop-blur-2xl p-6 md:p-9 rounded-[32px] card-shadow-frosted border border-white/30 relative">
@@ -154,9 +141,7 @@ export default function FonceLogin() {
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label className="block text-xs font-bold text-white tracking-wide uppercase mb-2">
-                Email Address
-              </label>
+              <label className="block text-xs font-bold text-white tracking-wide uppercase mb-2">Email Address</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <Mail size={16} className="text-zinc-400 group-focus-within:text-white transition-colors" />
@@ -174,12 +159,8 @@ export default function FonceLogin() {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="block text-xs font-bold text-white tracking-wide uppercase">
-                  Password
-                </label>
-                <a href="#" className="text-[11px] font-semibold text-zinc-400 hover:text-white transition-colors">
-                  Forgot password?
-                </a>
+                <label className="block text-xs font-bold text-white tracking-wide uppercase">Password</label>
+                <a href="#" className="text-[11px] font-semibold text-zinc-400 hover:text-white transition-colors">Forgot password?</a>
               </div>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -207,8 +188,7 @@ export default function FonceLogin() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full py-3.5 rounded-xl font-bold text-xs tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300
-                  ${isLoading ? 'bg-white/10 text-zinc-400 cursor-not-allowed border border-white/10' : 'bg-white text-black hover:bg-zinc-200 active:scale-[0.99] shadow-[0_0_20px_rgba(255,255,255,0.3)] border border-white'}`}
+                className={`w-full py-3.5 rounded-xl font-bold text-xs tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 ${isLoading ? 'bg-white/10 text-zinc-400 cursor-not-allowed border border-white/10' : 'bg-white text-black hover:bg-zinc-200 active:scale-[0.99] shadow-[0_0_20px_rgba(255,255,255,0.3)] border border-white'}`}
               >
                 {isLoading ? (
                   <>
@@ -224,15 +204,6 @@ export default function FonceLogin() {
               </button>
             </div>
           </form>
-        </div>
-
-        <div className="mt-10 text-center space-y-2">
-          <div className="text-white/40 text-[10px] font-medium tracking-widest uppercase">
-            Advanced Security System
-          </div>
-          <div className="text-white/20 text-[9px] font-medium">
-            &copy; 2026 Fotobisnisku
-          </div>
         </div>
       </main>
     </div>
