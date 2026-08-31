@@ -1,85 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { 
+  UploadCloud, 
+  Image as ImageIcon, 
+  X, 
+  Lock, 
+  Check, 
+  Copy, 
+  AlertCircle, 
+  Loader2,
+  History,
+  Trash2,
+  RotateCcw,
+  Clock
+} from 'lucide-react';
 
-const apiKey = import.meta.env?.VITE_GEMINI_API_KEY || ""; 
-
-// --- INLINE SVG ICONS ---
-const Icons = {
-  History: ({ className = "w-4 h-4" }: { className?: string }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  ),
-  AlertCircle: ({ className = "w-4 h-4" }: { className?: string }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="8" x2="12" y2="12" />
-      <line x1="12" y1="16" x2="12.01" y2="16" />
-    </svg>
-  ),
-  UploadCloud: ({ className = "w-5 h-5" }: { className?: string }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-    </svg>
-  ),
-  Image: ({ className = "w-5 h-5" }: { className?: string }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-      <circle cx="8.5" cy="8.5" r="1.5" />
-      <polyline points="21 15 16 10 5 21" />
-    </svg>
-  ),
-  X: ({ className = "w-4 h-4" }: { className?: string }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  ),
-  Lock: ({ className = "w-3.5 h-3.5" }: { className?: string }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-      <path d="M7 11V7a5 5 0 0110 0v4" />
-    </svg>
-  ),
-  Check: ({ className = "w-3 h-3" }: { className?: string }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  ),
-  Copy: ({ className = "w-3.5 h-3.5" }: { className?: string }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-    </svg>
-  ),
-  Loader: ({ className = "w-4 h-4" }: { className?: string }) => (
-    <svg className={`${className} animate-spin`} fill="none" viewBox="0 0 24 24">
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-    </svg>
-  ),
-  Trash: ({ className = "w-3.5 h-3.5" }: { className?: string }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <polyline points="3 6 5 6 21 6" />
-      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-    </svg>
-  ),
-  RotateCcw: ({ className = "w-3.5 h-3.5" }: { className?: string }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <polyline points="1 4 1 10 7 10" />
-      <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
-    </svg>
-  ),
-  Clock: ({ className = "w-6 h-6" }: { className?: string }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 14" />
-    </svg>
-  )
-};
 
 // --- DATA DICTIONARIES ---
 
-const FONCE_PRODUCT_DETAILS: Record<string, string> = {
+const FONCE_PRODUCT_DETAILS = {
   "Wild Garden": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Wild Garden" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Winter Bloom": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Winter Bloom" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Roses Vanille": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Roses Vanille" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
@@ -105,16 +43,16 @@ const FONCE_PRODUCT_DETAILS: Record<string, string> = {
   "Grand Gala": `A smooth glossy clear thick-glass perfume bottle with a heavy flat base, filled with a translucent smoked black gradient liquid that transitions into a darker tone toward the bottom. The bottle features rounded shoulders with a clean minimalist cylindrical silhouette. Topped with a tall glossy black plastic cylindrical cap. A thin transparent internal pump tube is visible inside. The front surface features centered gold metallic typography: the brand name foncé, followed by a small letter x and the JFC JAKARTA FRAGRANCE CLUB logo, above the product name GRAND GALA in large elegant serif lettering, with Extrait De Parfum underneath and Special Collection 50 ml near the lower edge.`
 };
 
-const PREDIRE_PRODUCT_DETAILS: Record<string, string> = {
+const PREDIRE_PRODUCT_DETAILS = {
   "Orange Poivree": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of transparent cylindrical glass with a thick orange-colored base and thick orange glass walls. Inside, the perfume liquid is a clear transparent orange, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Orange Poivree” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Delish Library": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of matte white cylindrical glass with a thick base and thick glass walls. Solid black text is directly printed on the glass bottle: “Predire” at the top, “Delish Library” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Honey Of The Valley": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of honey-yellow cylindrical glass with a thick honey-yellow base and thick glass walls. Inside, the perfume liquid is a clear transparent honey yellow, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Honey Of The Valley” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
-  "Forbidden Iris": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of transparent cylindrical glass with a thick base and thick glass walls in a bright bluish-purple tone. Inside, the perfume liquid is a clear transparent blue, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Forbidden Iris” in the center, dan “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
+  "Forbidden Iris": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of transparent cylindrical glass with a thick base and thick glass walls in a bright bluish-purple tone. Inside, the perfume liquid is a clear transparent blue, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Forbidden Iris” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Caribbean Sunset": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of transparent cylindrical glass with a thick dark brown base and thick dark brown glass walls. Inside, the perfume liquid is brown, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Caribbean Sunset” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Or Noir Absolu": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of fully glossy black cylindrical glass. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Or Noir Absolu” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`
 };
 
-const FEEL_ONE_ADULT_PRODUCTS: Record<string, string> = {
+const FEEL_ONE_ADULT_PRODUCTS = {
   "Sexy Lady": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy whitish-pink plastic spherical cap and contains a transparent pink liquid. A glossy whitish-pink label is printed directly onto the glass, featuring a lip icon graphic, with the main typography "Sexy Lady" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`,
   "The Gentleman": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy black plastic spherical cap and contains a transparent yellow liquid. A glossy black label is printed directly onto the glass, with the main typography "THE GENTLEMAN" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`,
   "Independent Woman": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy black plastic spherical cap and contains a transparent bright yellow liquid. A glossy black label is printed directly onto the glass, with the main typography "INDEPENDENT WOMAN" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`,
@@ -124,7 +62,7 @@ const FEEL_ONE_ADULT_PRODUCTS: Record<string, string> = {
   "Heartbeat": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy cornflower blue plastic spherical cap and contains a transparent light blue liquid. A glossy white label is printed directly onto the glass, featuring an electrocardiogram graphic, with the main typography "HEARTBEAT" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`
 };
 
-const FEEL_ONE_KIDS_PRODUCTS: Record<string, string> = {
+const FEEL_ONE_KIDS_PRODUCTS = {
   "Bunny Cloud": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear pink liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Bunny Cloud, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Butterfly Bloom": `A bottle of perfume with a perfect glossy pink plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear pink liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Butterfly Bloom, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Cuddle Puppy": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear yellowish liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Cuddle Puppy, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
@@ -152,7 +90,7 @@ const LOCK_OPTIONS = [
   "Framing", "Mood"
 ];
 
-const BRANDS: Record<string, any> = {
+const BRANDS = {
   FONCE: {
     name: "Foncé",
     details: FONCE_PRODUCT_DETAILS,
@@ -170,13 +108,13 @@ const BRANDS: Record<string, any> = {
     details: FEEL_ONE_PRODUCT_DETAILS,
     storageKey: "feelone_prompt_history",
     specRule: "Bottle geometry & glass shape (e.g. square-shaped with rounded corners & embossed dotted texture for ADULT series, or glossy transparent cylindrical bottle with thick glass base for KIDS series). Cap shape & finish (e.g. spherical cap / ball cap with exact plastic color and gloss). Liquid translucency, exact liquid color, and internal transparent pump mechanism. ALL typography, quotes, cartoon illustrations / graphics, and monogram logos verbatim as provided. Bottom markings and size designations ('eau de parfum / extrait de parfum', '35 ml', etc.).",
-    hasCategories: true,
+    hasCategories: true, // Flag khusus untuk Feel One agar merender filter kategori
     adultProducts: FEEL_ONE_ADULT_PRODUCTS,
     kidsProducts: FEEL_ONE_KIDS_PRODUCTS
   }
 };
 
-const getSystemPrompt = (brandName: string, specRule: string) => `
+const getSystemPrompt = (brandName, specRule) => `
 MASTER PROMPT
 PHOTOGRAPHY REFERENCE ANALYZER & FULL PRODUCT SPECIFICATION INJECTION ENGINE
 ════════════════════════════════════════════════════════════════
@@ -209,38 +147,42 @@ FINAL PROMPT FORMAT:
 [Shot Type] of [Subject: Full Unabridged Product Identity & Exact Specifications for ALL selected products arranged together], [Pose + Framing + Composition], in/against [Environment + Background], color palette – [Dominant + Accent + Shadow Tone + Highlight Tone], [Surface Finish], [Creative Direction], Atmosphere – [Mood], [Symbolism - if relevant], hyperrealistic detail, ultra sharp focus, [Lighting + Aesthetic], shot on [Camera + Lens + Technical].
 `;
 
-function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: any) {
+// --- COMPONENT DINAMIS TAB UTAMA ---
+function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) {
   const { name: brandName, details: productDetailsMap, storageKey, specRule, hasCategories, adultProducts, kidsProducts } = brandConfig;
   const brandProducts = Object.keys(productDetailsMap);
 
-  const [mainImage, setMainImage] = useState<any>(null);
-  const [charImage, setCharImage] = useState<any>(null);
+  const [mainImage, setMainImage] = useState(null);
+  const [charImage, setCharImage] = useState(null);
   const [isDraggingMain, setIsDraggingMain] = useState(false);
   const [isDraggingChar, setIsDraggingChar] = useState(false);
   
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [activeCategoryTab, setActiveCategoryTab] = useState('ALL');
+  // State for products and filtering (khusus Feel One)
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [activeCategoryTab, setActiveCategoryTab] = useState('ALL'); // 'ALL' | 'ADULT' | 'KIDS'
 
-  const [lockedParams, setLockedParams] = useState<string[]>([]);
+  const [lockedParams, setLockedParams] = useState([]);
   const [additionalText, setAdditionalText] = useState('');
   
   const [isGenerating, setIsGenerating] = useState(false);
-  const [, setGenerationStatus] = useState('');
+  const [generationStatus, setGenerationStatus] = useState('');
   const [outputPrompt, setOutputPrompt] = useState('');
   const [error, setError] = useState('');
   const [isCopied, setIsCopied] = useState(false);
 
-  const [history, setHistory] = useState<any[]>(() => {
+  const [history, setHistory] = useState(() => {
+    if (typeof window === 'undefined') return [];
     try {
-      const saved = localStorage.getItem(storageKey);
+      const saved = window.localStorage.getItem(storageKey);
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
     }
   });
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [copiedHistoryId, setCopiedHistoryId] = useState<string | null>(null);
+  const [copiedHistoryId, setCopiedHistoryId] = useState(null);
 
+  // Beritahu parent component jika tab ini sedang generating
   useEffect(() => {
     if (onGeneratingStateChange) {
       onGeneratingStateChange(isGenerating);
@@ -249,22 +191,23 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
 
   useEffect(() => {
     try {
-      localStorage.setItem(storageKey, JSON.stringify(history));
+      window.localStorage.setItem(storageKey, JSON.stringify(history));
     } catch (e) {
       console.error("Gagal menyimpan riwayat", e);
     }
   }, [history, storageKey]);
 
+  // Mouse position state for smooth brush glow
   const [cursorPos, setCursorPos] = useState({ x: -1000, y: -1000 });
   const [smoothPos, setSmoothPos] = useState({ x: -1000, y: -1000 });
 
-  const mainInputRef = useRef<HTMLInputElement>(null);
-  const charInputRef = useRef<HTMLInputElement>(null);
-  const requestRef = useRef<number | null>(null);
+  const mainInputRef = useRef(null);
+  const charInputRef = useRef(null);
+  const requestRef = useRef(null);
 
   useEffect(() => {
     if (!isActive) return;
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMouseMove = (e) => {
       setCursorPos({ x: e.clientX, y: e.clientY });
     };
 
@@ -286,13 +229,11 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     };
 
     requestRef.current = requestAnimationFrame(animateGlow);
-    return () => {
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
-    };
+    return () => cancelAnimationFrame(requestRef.current);
   }, [cursorPos, isActive]);
 
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
+    let interval;
     if (isGenerating) {
       const statuses = [
         "Menganalisa DNA visual...", 
@@ -310,49 +251,79 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     return () => clearInterval(interval);
   }, [isGenerating, brandName]);
 
-  const processImageFile = (file: File, setImageFn: any) => {
+  const processImageFile = async (file, setImageFn) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
       setError('Harap unggah file gambar yang valid.');
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Ukuran gambar maksimal 5MB.');
+    if (file.size > 15 * 1024 * 1024) {
+      setError('Ukuran gambar maksimal 15MB sebelum kompresi.');
       return;
     }
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImageFn({
-        file: file,
-        dataUrl: reader.result,
-        mimeType: file.type,
-        base64: (reader.result as string).split(',')[1]
-      });
-      setError('');
-    };
-    reader.readAsDataURL(file);
-  };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setImageFn: any) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      processImageFile(file, setImageFn);
+    try {
+      const prepared = await prepareImageForApi(file);
+      setImageFn(prepared);
+      setError('');
+    } catch (err: any) {
+      console.error('Gagal memproses gambar:', err);
+      setError(err?.message || 'Gagal memproses gambar.');
     }
   };
 
-  const handleDragOver = (e: React.DragEvent, setDragState: any) => {
+  const prepareImageForApi = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Gagal membaca file gambar.'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('File gambar tidak dapat diproses browser.'));
+      img.onload = () => {
+        const maxDimension = 1600;
+        const scale = Math.min(1, maxDimension / Math.max(img.naturalWidth, img.naturalHeight));
+        const width = Math.max(1, Math.round(img.naturalWidth * scale));
+        const height = Math.max(1, Math.round(img.naturalHeight * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Browser tidak mendukung pemrosesan gambar.'));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        const base64 = dataUrl.split(',')[1];
+        if (!base64) {
+          reject(new Error('Gambar hasil kompresi tidak valid.'));
+          return;
+        }
+        resolve({ file, dataUrl, mimeType: 'image/jpeg', base64 });
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  const handleImageUpload = (e, setImageFn) => {
+    const file = e.target.files?.[0];
+    if (file) processImageFile(file, setImageFn);
+    e.target.value = '';
+  };
+
+  const handleDragOver = (e, setDragState) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(true);
   };
 
-  const handleDragLeave = (e: React.DragEvent, setDragState: any) => {
+  const handleDragLeave = (e, setDragState) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(false);
   };
 
-  const handleDrop = (e: React.DragEvent, setImageFn: any, setDragState: any) => {
+  const handleDrop = (e, setImageFn, setDragState) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(false);
@@ -362,7 +333,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
     }
   };
 
-  const toggleSelection = (item: string, list: string[], setList: any) => {
+  const toggleSelection = (item, list, setList) => {
     if (list.includes(item)) {
       setList(list.filter(i => i !== item));
     } else {
@@ -372,40 +343,55 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: 
 
   const handleCopy = () => {
     if (!outputPrompt) return;
-    navigator.clipboard.writeText(outputPrompt).then(() => {
+    const textArea = document.createElement("textarea");
+    textArea.value = outputPrompt;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
-    }).catch((e) => {
+    } catch (e) {
       console.error("Gagal menyalin teks", e);
-    });
+    }
+    document.body.removeChild(textArea);
   };
 
-  const callGeminiWithBackoff = async (payload: any, maxRetries = 5) => {
-    const delays = [1000, 2000, 4000, 8000, 16000];
+  const callGeminiWithBackoff = async (requestBody, maxRetries = 3) => {
+    const delays = [1000, 2000, 4000];
+
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+        const response = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(requestBody),
         });
 
-        const data = await response.json();
-
-        if (response.ok) {
-          return data;
+        const raw = await response.text();
+        let data: any = {};
+        try {
+          data = raw ? JSON.parse(raw) : {};
+        } catch {
+          data = { error: raw || 'Server mengembalikan respons yang tidak valid.' };
         }
 
-        if (attempt === maxRetries) {
-          throw new Error(data.error?.message || 'Terjadi gangguan saat memproses gambar.');
+        if (response.ok) return data;
+
+        const message = data?.error?.message || data?.error || `Request gagal (${response.status}).`;
+        const retryable = response.status === 408 || response.status === 429 || response.status >= 500;
+
+        if (!retryable || attempt === maxRetries) {
+          throw new Error(message);
         }
       } catch (err) {
-        if (attempt === maxRetries) {
-          throw err;
-        }
+        if (attempt === maxRetries) throw err;
       }
+
       await new Promise(resolve => setTimeout(resolve, delays[attempt] || 1000));
     }
+
+    throw new Error('Gagal menghubungi server.');
   };
 
   const generatePrompt = async () => {
@@ -442,7 +428,7 @@ CRITICAL ENFORCEMENT: Exactly ${productCount} product(s) are selected (${selecte
 You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH selected product into the SUBJECT section of your output prompt. DO NOT summarize or omit any detail.`
         : `Analyze the attached MAIN REFERENCE IMAGE based on the system instructions and construct the photography prompt.`;
 
-      const contents: any[] = [
+      const contents = [
         {
           role: "user",
           parts: [
@@ -459,14 +445,12 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 
       contents[0].parts.push({ text: userInstructionText });
 
-      const payload = {
+      const requestBody = {
+        systemInstruction: getSystemPrompt(brandName, specRule),
         contents,
-        systemInstruction: {
-          parts: [{ text: getSystemPrompt(brandName, specRule) }]
-        }
       };
 
-      const data = await callGeminiWithBackoff(payload);
+      const data = await callGeminiWithBackoff(requestBody);
 
       const generatedText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (generatedText) {
@@ -487,23 +471,29 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
       } else {
         throw new Error('AI tidak memberikan respon teks.');
       }
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Terjadi kesalahan sistem.");
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const copyHistoryPrompt = (item: any) => {
-    navigator.clipboard.writeText(item.prompt).then(() => {
+  const copyHistoryPrompt = (item) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = item.prompt;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
       setCopiedHistoryId(item.id);
       setTimeout(() => setCopiedHistoryId(null), 2000);
-    }).catch((e) => {
+    } catch (e) {
       console.error("Gagal menyalin riwayat", e);
-    });
+    }
+    document.body.removeChild(textArea);
   };
 
-  const restoreHistoryItem = (item: any) => {
+  const restoreHistoryItem = (item) => {
     setOutputPrompt(item.prompt);
     if (item.products && item.products.length > 0) {
       setSelectedProducts(item.products);
@@ -519,16 +509,18 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 
   return (
     <div className={isActive ? 'contents' : 'hidden'}>
+      {/* Smooth Brush Glow Pointer Layer */}
       <div 
         className="pointer-events-none fixed inset-0 z-0 transition-opacity duration-700"
         style={{
-          background: `radial-gradient(600px circle at ${smoothPos.x}px ${smoothPos.y}px, rgba(255, 255, 255, 0.08), transparent 80%)`,
+          background: `radial-gradient(600px circle at ${smoothPos.x}px ${smoothPos.y}px, rgba(255, 255, 255, 0.085), transparent 80%)`,
         }}
       />
+      {/* Secondary Ambient Accent Glow */}
       <div 
         className="pointer-events-none fixed inset-0 z-0 transition-opacity duration-1000"
         style={{
-          background: `radial-gradient(350px circle at ${smoothPos.x}px ${smoothPos.y}px, rgba(255, 255, 255, 0.04), transparent 70%)`,
+          background: `radial-gradient(350px circle at ${smoothPos.x}px ${smoothPos.y}px, rgba(255, 255, 255, 0.05), transparent 70%)`,
         }}
       />
 
@@ -538,7 +530,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
           className="group relative flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-xl border border-white/20 text-white text-xs font-semibold tracking-wide transition-all duration-300 shadow-lg hover:border-white/40"
           title="Buka Riwayat Prompt"
         >
-          <Icons.History className="w-4 h-4 text-zinc-300 group-hover:text-white transition-colors"/>
+          <History size={15} className="text-zinc-300 group-hover:text-white transition-colors" />
           <span className="hidden sm:inline">History</span>
           {history.length > 0 && (
             <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-white text-black rounded-full shadow-sm">
@@ -550,6 +542,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 
       <main className="flex-grow flex flex-col items-center justify-center py-8 px-4 md:px-6 w-full max-w-4xl mx-auto relative z-10 pt-24 md:pt-28">
         
+        {/* Minimalist Header */}
         <div className="mb-8 text-center flex flex-col items-center">
           <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-semibold tracking-widest uppercase mb-3 shadow-sm">
             <span>{brandName}</span>
@@ -559,23 +552,27 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
           </h1>
         </div>
 
-        <div className="w-full bg-white/[0.08] backdrop-blur-2xl p-6 md:p-9 rounded-[32px] card-shadow-frosted border border-white/20 relative">
+        {/* Frosted Glass Main Card */}
+        <div className="w-full bg-white/25 backdrop-blur-2xl p-6 md:p-9 rounded-[32px] card-shadow-frosted border border-white/30 relative">
           
+          {/* Smooth Disappearing Error Alert */}
           <div className={`transition-all duration-500 ease-in-out overflow-hidden ${error ? 'max-h-24 opacity-100 mb-6' : 'max-h-0 opacity-0 mb-0'}`}>
             <div className="bg-red-500/20 text-red-200 p-3.5 rounded-2xl flex items-center gap-3 border border-red-400/30 text-xs font-semibold backdrop-blur-md">
-              <Icons.AlertCircle className="shrink-0 w-4 h-4 text-red-400"/>
+              <AlertCircle size={16} className="shrink-0 text-red-400" />
               <span>{error}</span>
             </div>
           </div>
 
           <div className="space-y-7">
+            {/* Image Upload Area */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Main Reference */}
               <div className="flex flex-col items-center">
                 <div className="text-center mb-2.5">
                   <div className="text-xs font-bold text-white tracking-wide uppercase">
                     Main Reference <span className="text-red-400 font-bold">*</span>
                   </div>
-                  <div className="text-[11px] text-zinc-400 font-medium mt-0.5">Visual Blueprint</div>
+                  <div className="text-[11px] text-zinc-300 font-medium mt-0.5">Visual Blueprint</div>
                 </div>
                 
                 <div 
@@ -587,8 +584,8 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                     ${isDraggingMain 
                       ? 'border-white bg-white/20 scale-[1.01]' 
                       : mainImage 
-                        ? 'border-white/20 bg-black/40' 
-                        : 'border-dashed border-white/30 bg-black/30 hover:bg-white/10 hover:border-white/60'}`}
+                        ? 'border-white/20 bg-black/30' 
+                        : 'border-dashed border-white/30 bg-black/20 hover:bg-white/10 hover:border-white/60'}`}
                 >
                   {mainImage ? (
                     <>
@@ -599,29 +596,30 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                           className="bg-white text-zinc-900 p-2 rounded-full hover:bg-red-500 hover:text-white transition-all shadow-md"
                           title="Hapus gambar"
                         >
-                          <Icons.X className="w-4 h-4"/>
+                          <X size={16} />
                         </button>
                       </div>
                     </>
                   ) : (
                     <div className="text-center p-4 flex flex-col items-center">
-                      <div className="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-white mb-2.5 group-hover:scale-105 transition-all shadow-sm">
-                        <Icons.UploadCloud className="w-5 h-5"/>
+                      <div className="w-10 h-10 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-white mb-2.5 group-hover:scale-105 transition-all shadow-sm">
+                        <UploadCloud size={18} />
                       </div>
                       <p className="text-xs font-bold text-white">Unggah Gambar Utama</p>
-                      <p className="text-[10px] text-zinc-400 mt-0.5">Drag & drop atau klik (Maks. 5MB)</p>
+                      <p className="text-[10px] text-zinc-300 mt-0.5">Drag & drop atau klik (Maks. 5MB)</p>
                     </div>
                   )}
                   <input type="file" accept="image/*" ref={mainInputRef} onChange={(e) => handleImageUpload(e, setMainImage)} className="hidden" />
                 </div>
               </div>
 
+              {/* Character Reference */}
               <div className="flex flex-col items-center">
                 <div className="text-center mb-2.5">
                   <div className="text-xs font-bold text-white tracking-wide uppercase">
                     Character Reference
                   </div>
-                  <div className="text-[11px] text-zinc-400 font-medium mt-0.5">Opsional</div>
+                  <div className="text-[11px] text-zinc-300 font-medium mt-0.5">Opsional</div>
                 </div>
                 
                 <div 
@@ -633,8 +631,8 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                     ${isDraggingChar 
                       ? 'border-white bg-white/20 scale-[1.01]' 
                       : charImage 
-                        ? 'border-white/20 bg-black/40' 
-                        : 'border-dashed border-white/30 bg-black/30 hover:bg-white/10 hover:border-white/60'}`}
+                        ? 'border-white/20 bg-black/30' 
+                        : 'border-dashed border-white/30 bg-black/20 hover:bg-white/10 hover:border-white/60'}`}
                 >
                   {charImage ? (
                     <>
@@ -645,17 +643,17 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                           className="bg-white text-zinc-900 p-2 rounded-full hover:bg-red-500 hover:text-white transition-all shadow-md"
                           title="Hapus gambar"
                         >
-                          <Icons.X className="w-4 h-4"/>
+                          <X size={16} />
                         </button>
                       </div>
                     </>
                   ) : (
                     <div className="text-center p-4 flex flex-col items-center">
-                      <div className="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-zinc-200 mb-2.5 group-hover:scale-105 transition-all shadow-sm">
-                        <Icons.Image className="w-5 h-5"/>
+                      <div className="w-10 h-10 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-zinc-200 mb-2.5 group-hover:scale-105 transition-all shadow-sm">
+                        <ImageIcon size={18} />
                       </div>
-                      <p className="text-xs font-bold text-zinc-200">Model / Karakter</p>
-                      <p className="text-[10px] text-zinc-400 mt-0.5">Drag & drop atau klik (Opsional)</p>
+                      <p className="text-xs font-bold text-zinc-100">Model / Karakter</p>
+                      <p className="text-[10px] text-zinc-300 mt-0.5">Drag & drop atau klik (Opsional)</p>
                     </div>
                   )}
                   <input type="file" accept="image/*" ref={charInputRef} onChange={(e) => handleImageUpload(e, setCharImage)} className="hidden" />
@@ -663,28 +661,30 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
               </div>
             </div>
 
+            {/* Product Library Section */}
             <div>
               <div className="flex items-center justify-between mb-3">
                 <label className="text-xs font-bold text-white tracking-wide uppercase">
                   Select Product Library
                 </label>
                 {selectedProducts.length > 0 && (
-                  <span className="text-[11px] font-bold text-black bg-white px-2.5 py-0.5 rounded-full shadow-sm">
+                  <span className="text-[11px] font-bold text-black bg-white px-2.5 py-0.5 rounded-full shadow-xs">
                     {selectedProducts.length} dipilih
                   </span>
                 )}
               </div>
 
+              {/* Tampilkan filter kategori JIKA flag hasCategories = true (kasus Feel One) */}
               {hasCategories && (
-                <div className="flex items-center gap-1.5 p-1 bg-black/40 rounded-xl border border-white/15 backdrop-blur-md mb-3">
+                <div className="flex items-center gap-1.5 p-1 bg-black/35 rounded-xl border border-white/15 backdrop-blur-md mb-3">
                   {[
                     { id: 'ALL', label: 'All Series' },
                     { id: 'ADULT', label: 'Adult' },
                     { id: 'KIDS', label: 'Kids' }
                   ].map((tab) => {
-                    const isTabActive = activeCategoryTab === tab.id;
-                    const adultCount = selectedProducts.filter(p => Object.keys(adultProducts || {}).includes(p)).length;
-                    const kidsCount = selectedProducts.filter(p => Object.keys(kidsProducts || {}).includes(p)).length;
+                    const isActive = activeCategoryTab === tab.id;
+                    const adultCount = selectedProducts.filter(p => Object.keys(adultProducts).includes(p)).length;
+                    const kidsCount = selectedProducts.filter(p => Object.keys(kidsProducts).includes(p)).length;
                     const badge = tab.id === 'ADULT' ? adultCount : tab.id === 'KIDS' ? kidsCount : selectedProducts.length;
 
                     return (
@@ -693,15 +693,15 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                         type="button"
                         onClick={() => setActiveCategoryTab(tab.id)}
                         className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold tracking-wide uppercase transition-all duration-200 flex items-center justify-center gap-1.5
-                          ${isTabActive 
+                          ${isActive 
                             ? 'bg-white text-black shadow-sm' 
                             : 'text-zinc-400 hover:text-white hover:bg-white/10'
                           }`}
                       >
                         <span>{tab.label}</span>
                         {badge > 0 && (
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-                            isTabActive ? 'bg-black text-white' : 'bg-white/20 text-white'
+                          <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                            isActive ? 'bg-black text-white' : 'bg-white/20 text-white'
                           }`}>
                             {badge}
                           </span>
@@ -712,9 +712,11 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                 </div>
               )}
 
-              <div className="max-h-48 overflow-y-auto custom-scroll space-y-3 bg-black/30 rounded-2xl border border-white/10 p-3">
+              {/* Rendering list produk berdasarkan kategori aktif atau semua (jika bukan Feel One) */}
+              <div className="max-h-48 overflow-y-auto custom-scroll p-1 space-y-3 bg-black/20 rounded-2xl border border-white/10 p-2.5">
                 {hasCategories ? (
                   <>
+                    {/* Bagian Adult Series */}
                     {(activeCategoryTab === 'ALL' || activeCategoryTab === 'ADULT') && (
                       <div>
                         {activeCategoryTab === 'ALL' && (
@@ -724,7 +726,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                           </div>
                         )}
                         <div className="flex flex-wrap gap-1.5">
-                          {Object.keys(adultProducts || {}).map((prod) => {
+                          {Object.keys(adultProducts).map((prod) => {
                             const isSelected = selectedProducts.includes(prod);
                             return (
                               <button
@@ -734,7 +736,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
                                   ${isSelected 
                                     ? 'bg-white text-black border-white shadow-sm font-bold scale-[1.02]' 
-                                    : 'bg-black/40 text-zinc-300 border-white/15 hover:border-white/40 hover:bg-white/15'
+                                    : 'bg-black/30 text-zinc-200 border-white/20 hover:border-white/50 hover:bg-white/15'
                                   }`}
                               >
                                 {prod}
@@ -745,6 +747,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                       </div>
                     )}
 
+                    {/* Bagian Kids Series */}
                     {(activeCategoryTab === 'ALL' || activeCategoryTab === 'KIDS') && (
                       <div>
                         {activeCategoryTab === 'ALL' && (
@@ -754,7 +757,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                           </div>
                         )}
                         <div className="flex flex-wrap gap-1.5">
-                          {Object.keys(kidsProducts || {}).map((prod) => {
+                          {Object.keys(kidsProducts).map((prod) => {
                             const isSelected = selectedProducts.includes(prod);
                             return (
                               <button
@@ -764,7 +767,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
                                   ${isSelected 
                                     ? 'bg-white text-black border-white shadow-sm font-bold scale-[1.02]' 
-                                    : 'bg-black/40 text-zinc-300 border-white/15 hover:border-white/40 hover:bg-white/15'
+                                    : 'bg-black/30 text-zinc-200 border-white/20 hover:border-white/50 hover:bg-white/15'
                                   }`}
                               >
                                 {prod}
@@ -776,6 +779,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                     )}
                   </>
                 ) : (
+                  // Rendering normal untuk brand tanpa kategori (Fonce, Predire)
                   <div className="flex flex-wrap gap-1.5">
                     {brandProducts.map((prod) => {
                       const isSelected = selectedProducts.includes(prod);
@@ -787,7 +791,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                           className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
                             ${isSelected 
                               ? 'bg-white text-black border-white shadow-sm font-bold scale-[1.02]' 
-                              : 'bg-black/40 text-zinc-300 border-white/15 hover:border-white/40 hover:bg-white/15 shadow-sm'
+                              : 'bg-black/25 text-zinc-200 border-white/20 hover:border-white/50 hover:bg-white/15 shadow-2xs'
                             }`}
                         >
                           {prod}
@@ -799,18 +803,19 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
               </div>
             </div>
 
+            {/* Smooth Disappearing & Appearing Lock Parameters */}
             <div 
               className={`transition-all duration-500 ease-in-out overflow-hidden ${
                 selectedProducts.length > 0 ? 'max-h-48 opacity-100 pt-1' : 'max-h-0 opacity-0 pt-0'
               }`}
             >
-              <div className="p-4 rounded-2xl bg-black/35 border border-white/20 backdrop-blur-md shadow-sm">
+              <div className="p-4 rounded-2xl bg-black/25 border border-white/20 backdrop-blur-md shadow-2xs">
                 <div className="flex items-center gap-1.5 mb-2.5">
-                  <Icons.Lock className="w-3.5 h-3.5 text-zinc-300"/>
+                  <Lock size={13} className="text-zinc-200" />
                   <span className="text-xs font-bold text-white tracking-wide uppercase">
                     Lock Parameters
                   </span>
-                  <span className="text-[10px] font-semibold text-zinc-400 ml-auto">
+                  <span className="text-[10px] font-semibold text-zinc-300 ml-auto">
                     Prioritas Tertinggi
                   </span>
                 </div>
@@ -824,11 +829,11 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                         onClick={() => toggleSelection(lock, lockedParams, setLockedParams)}
                         className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all duration-200 border flex items-center gap-1.5
                           ${isLocked 
-                            ? 'bg-white text-black border-white shadow-sm font-bold' 
-                            : 'bg-white/10 text-zinc-300 border-white/15 hover:border-white/30 hover:bg-white/20'
+                            ? 'bg-white text-black border-white shadow-xs font-bold' 
+                            : 'bg-white/10 text-zinc-200 border-white/20 hover:border-white/40 hover:bg-white/20 shadow-2xs'
                           }`}
                       >
-                        {isLocked && <Icons.Check className="w-3 h-3 stroke-[3]"/>}
+                        {isLocked && <Check size={11} className="stroke-[3]" />}
                         {lock}
                       </button>
                     );
@@ -837,6 +842,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
               </div>
             </div>
 
+            {/* Minimalist Textarea */}
             <div>
               <label className="block text-xs font-bold text-white tracking-wide uppercase mb-2">
                 Additional Instructions
@@ -845,23 +851,24 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                 value={additionalText}
                 onChange={(e) => setAdditionalText(e.target.value)}
                 placeholder="Tambahkan arahan kreatif, perubahan sudut, atau detail pencahayaan..."
-                className="w-full bg-black/30 border border-white/20 rounded-2xl p-3.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/50 transition-all resize-none h-20 leading-relaxed font-medium backdrop-blur-md shadow-inner"
+                className="w-full bg-black/25 border border-white/25 rounded-2xl p-3.5 text-xs text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/60 focus:bg-black/35 transition-all resize-none h-20 leading-relaxed font-medium backdrop-blur-md shadow-inner"
               />
             </div>
 
+            {/* Sleek Minimalist Generate Button */}
             <div className="flex justify-center pt-1">
               <button
                 onClick={generatePrompt}
                 disabled={!mainImage || isGenerating}
                 className={`min-w-[180px] px-8 py-2.5 md:py-3 rounded-xl font-semibold text-xs tracking-wider uppercase flex items-center justify-center gap-2 transition-all duration-200
                   ${!mainImage || isGenerating
-                    ? 'bg-white/10 text-zinc-500 cursor-not-allowed border border-white/10'
+                    ? 'bg-white/10 text-zinc-400 cursor-not-allowed border border-white/10'
                     : 'bg-white text-black hover:bg-zinc-200 active:scale-[0.99] shadow-lg border border-white font-bold'
                   }`}
               >
                 {isGenerating ? (
                   <>
-                    <Icons.Loader className="w-4 h-4 text-black"/>
+                    <Loader2 className="animate-spin text-black" size={14} />
                     <span className="tracking-wider uppercase text-black font-bold">Process</span>
                   </>
                 ) : (
@@ -871,8 +878,9 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
             </div>
           </div>
 
+          {/* Generated Output */}
           <div 
-            className={`transition-all duration-500 ease-in-out overflow-hidden ${
+            className={`transition-all duration-600 ease-in-out overflow-hidden ${
               outputPrompt && !isGenerating ? 'max-h-[600px] opacity-100 mt-8 pt-6 border-t border-white/20' : 'max-h-0 opacity-0 mt-0 pt-0'
             }`}
           >
@@ -885,26 +893,28 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                 className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 border
                   ${isCopied 
                     ? 'bg-emerald-500 text-white border-emerald-500' 
-                    : 'bg-white/20 text-white border-white/30 hover:bg-white/30 shadow-sm'}`}
+                    : 'bg-white/20 text-white border-white/30 hover:bg-white/30 shadow-xs'}`}
               >
-                {isCopied ? <Icons.Check className="w-3.5 h-3.5"/> : <Icons.Copy className="w-3.5 h-3.5"/>}
+                {isCopied ? <Check size={12} /> : <Copy size={12} />}
                 <span>{isCopied ? 'Tersalin' : 'Salin'}</span>
               </button>
             </div>
             
-            <div className="bg-black/80 backdrop-blur-xl rounded-2xl p-4 md:p-5 border border-white/20 shadow-2xl">
-              <p className="font-mono text-xs text-zinc-200 leading-relaxed whitespace-pre-wrap selection:bg-white/30 selection:text-white">
+            <div className="bg-black/90 backdrop-blur-xl rounded-2xl p-4 md:p-5 border border-white/25 shadow-2xl">
+              <p className="font-mono text-xs text-zinc-100 leading-relaxed whitespace-pre-wrap selection:bg-white/30 selection:text-white">
                 {outputPrompt}
               </p>
             </div>
           </div>
         </div>
 
+        {/* Minimal Footer */}
         <div className="mt-8 text-white/40 text-[11px] font-medium tracking-wider uppercase">
           Automated Visual Intelligence &bull; {brandName}
         </div>
       </main>
 
+      {/* History Slide-out Drawer */}
       <div 
         className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
           isHistoryOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
@@ -913,14 +923,14 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
       />
 
       <div 
-        className={`fixed top-0 right-0 h-full w-full max-w-md z-50 bg-[#09090b]/95 backdrop-blur-2xl border-l border-white/20 shadow-2xl transition-transform duration-300 ease-out flex flex-col ${
+        className={`fixed top-0 right-0 h-full w-full max-w-md z-50 bg-[#09090b]/90 backdrop-blur-2xl border-l border-white/20 shadow-2xl transition-transform duration-300 ease-out flex flex-col ${
           isHistoryOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         <div className="p-5 border-b border-white/15 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white">
-              <Icons.History className="w-4 h-4"/>
+              <History size={16} />
             </div>
             <div>
               <h2 className="text-sm font-bold text-white tracking-wide uppercase">Prompt History</h2>
@@ -935,7 +945,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                 className="p-2 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
                 title="Hapus Semua Riwayat"
               >
-                <Icons.Trash className="w-4 h-4"/>
+                <Trash2 size={16} />
               </button>
             )}
             <button
@@ -943,7 +953,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
               className="p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-xl transition-all"
               title="Tutup Panel"
             >
-              <Icons.X className="w-4 h-4"/>
+              <X size={18} />
             </button>
           </div>
         </div>
@@ -952,7 +962,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
           {history.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-6 text-zinc-400">
               <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3 text-zinc-500">
-                <Icons.Clock className="w-6 h-6"/>
+                <Clock size={24} />
               </div>
               <p className="text-xs font-semibold text-zinc-300">Belum Ada Riwayat</p>
               <p className="text-[11px] text-zinc-500 mt-1 max-w-[220px]">
@@ -989,28 +999,28 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                       }`}
                       title="Salin Prompt"
                     >
-                      {copiedHistoryId === item.id ? <Icons.Check className="w-3 h-3"/> : <Icons.Copy className="w-3 h-3"/>}
+                      {copiedHistoryId === item.id ? <Check size={12} /> : <Copy size={12} />}
                     </button>
                     <button
                       onClick={() => restoreHistoryItem(item)}
                       className="p-1.5 bg-white/10 text-zinc-200 hover:text-white hover:bg-white/20 border border-white/15 rounded-lg transition-all"
                       title="Terapkan ke Layar Utama"
                     >
-                      <Icons.RotateCcw className="w-3 h-3"/>
+                      <RotateCcw size={12} />
                     </button>
                     <button
                       onClick={() => setHistory(prev => prev.filter(i => i.id !== item.id))}
                       className="p-1.5 bg-white/5 text-zinc-400 hover:text-red-400 hover:bg-red-500/15 border border-white/10 rounded-lg transition-all"
                       title="Hapus Item"
                     >
-                      <Icons.Trash className="w-3 h-3"/>
+                      <Trash2 size={12} />
                     </button>
                   </div>
                 </div>
 
                 {item.products && item.products.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-2">
-                    {item.products.map((p: string, idx: number) => (
+                    {item.products.map((p, idx) => (
                       <span key={idx} className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/15 text-white border border-white/20">
                         {p}
                       </span>
@@ -1030,14 +1040,15 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
   );
 }
 
-export default function Dashboard() {
+// --- KOMPONEN UTAMA (APP) ---
+export default function App() {
   const [activeTab, setActiveTab] = useState('FONCE');
-  const [generatingTabs, setGeneratingTabs] = useState<Record<string, boolean>>({});
+  const [generatingTabs, setGeneratingTabs] = useState({});
 
   useEffect(() => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = '[https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap](https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap)';
+    link.href = 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap';
     document.head.appendChild(link);
 
     const style = document.createElement('style');
@@ -1092,7 +1103,7 @@ export default function Dashboard() {
     { id: 'FEEL_ONE', label: 'Feel One' }
   ];
 
-  const handleTabGeneratingChange = (tabId: string, isGenerating: boolean) => {
+  const handleTabGeneratingChange = (tabId, isGenerating) => {
     setGeneratingTabs(prev => ({
       ...prev,
       [tabId]: isGenerating
@@ -1112,6 +1123,7 @@ export default function Dashboard() {
         backgroundPosition: 'center top'
       }}
     >
+      {/* Top Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center py-4 px-4 bg-black/40 backdrop-blur-xl border-b border-white/10">
         <div className="flex items-center gap-1.5 md:gap-2 overflow-x-auto hide-scrollbar w-full max-w-4xl justify-start md:justify-center px-2">
           {tabs.map((tab) => {
@@ -1129,7 +1141,7 @@ export default function Dashboard() {
                   }`}
               >
                 {isTabGenerating && (
-                  <Icons.Loader ${isActive 'text-amber-400'}`} 'text-black' : ? className="{`w-3" h-3/>
+                  <Loader2 size={12} className={`animate-spin ${isActive ? 'text-black' : 'text-amber-400'}`} />
                 )}
                 <span>{tab.label}</span>
               </button>
@@ -1138,8 +1150,14 @@ export default function Dashboard() {
         </div>
       </nav>
 
+      {/* Semua Tab tetap ter-mount agar proses generate dapat berjalan serentak 
+          di latar belakang dan tidak ter-reset saat berpindah antar tab */}
       {tabs.map((tab) => (
-        <PromptGeneratorTab brandConfig="{BRANDS[tab.id]}" isActive="{activeTab" key="{tab.id}" onGeneratingStateChange="{(isGen:" tab.id}> handleTabGeneratingChange(tab.id, isGen)}
+        <PromptGeneratorTab
+          key={tab.id}
+          brandConfig={BRANDS[tab.id]}
+          isActive={activeTab === tab.id}
+          onGeneratingStateChange={(isGen) => handleTabGeneratingChange(tab.id, isGen)}
         />
       ))}
       
