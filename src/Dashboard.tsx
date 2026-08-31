@@ -1085,8 +1085,8 @@ export default function Dashboard() {
                   }`}
               >
                 {isTabGenerating && (
-                  <Loader2 ${isActive 'text-amber-400'}`} 'text-black' : ? className="{`animate-spin" size="{12}"/>
-                )}
+  <Loader2 size={12} className={`animate-spin ${isActive ? 'text-black' : 'text-amber-400'}`} />
+)}
                 <span>{tab.label}</span>
               </button>
             );
@@ -1095,10 +1095,15 @@ export default function Dashboard() {
       </nav>
 
       {/* Render Semua Tab Secara Paralel */}
-      {tabs.map((tab) => (
-        <PromptGeneratorTab brandConfig="{BRANDS[tab.id]}" isActive="{activeTab" key="{tab.id}" onGeneratingStateChange="{(isGen)" tab.id}> handleTabGeneratingChange(tab.id, isGen)}
-        />
-      ))}
+      {/* Render Semua Tab Secara Paralel */}
+{tabs.map((tab) => (
+  <PromptGeneratorTab 
+    key={tab.id}
+    brandConfig={BRANDS[tab.id]} 
+    isActive={activeTab === tab.id} 
+    onGeneratingStateChange={(isGen) => handleTabGeneratingChange(tab.id, isGen)}
+  />
+))}
       
     </div>
   );
