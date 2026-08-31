@@ -14,6 +14,7 @@ import {
   Clock
 } from 'lucide-react';
 
+// Gemini API key tetap berada di server. Client hanya memanggil /api/generate.
 
 // --- DATA DICTIONARIES ---
 
@@ -251,64 +252,34 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
     return () => clearInterval(interval);
   }, [isGenerating, brandName]);
 
-  const processImageFile = async (file, setImageFn) => {
+  const processImageFile = (file, setImageFn) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
       setError('Harap unggah file gambar yang valid.');
       return;
     }
-    if (file.size > 15 * 1024 * 1024) {
-      setError('Ukuran gambar maksimal 15MB sebelum kompresi.');
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Ukuran gambar maksimal 5MB.');
       return;
     }
-
-    try {
-      const prepared = await prepareImageForApi(file);
-      setImageFn(prepared);
-      setError('');
-    } catch (err: any) {
-      console.error('Gagal memproses gambar:', err);
-      setError(err?.message || 'Gagal memproses gambar.');
-    }
-  };
-
-  const prepareImageForApi = (file) => new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onerror = () => reject(new Error('Gagal membaca file gambar.'));
-    reader.onload = () => {
-      const img = new Image();
-      img.onerror = () => reject(new Error('File gambar tidak dapat diproses browser.'));
-      img.onload = () => {
-        const maxDimension = 1600;
-        const scale = Math.min(1, maxDimension / Math.max(img.naturalWidth, img.naturalHeight));
-        const width = Math.max(1, Math.round(img.naturalWidth * scale));
-        const height = Math.max(1, Math.round(img.naturalHeight * scale));
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject(new Error('Browser tidak mendukung pemrosesan gambar.'));
-          return;
-        }
-        ctx.drawImage(img, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
-        const base64 = dataUrl.split(',')[1];
-        if (!base64) {
-          reject(new Error('Gambar hasil kompresi tidak valid.'));
-          return;
-        }
-        resolve({ file, dataUrl, mimeType: 'image/jpeg', base64 });
-      };
-      img.src = reader.result as string;
+    reader.onloadend = () => {
+      setImageFn({
+        file: file,
+        dataUrl: reader.result,
+        mimeType: file.type,
+        base64: reader.result.split(',')[1]
+      });
+      setError('');
     };
     reader.readAsDataURL(file);
-  });
+  };
 
   const handleImageUpload = (e, setImageFn) => {
     const file = e.target.files?.[0];
-    if (file) processImageFile(file, setImageFn);
-    e.target.value = '';
+    if (file) {
+      processImageFile(file, setImageFn);
+    }
   };
 
   const handleDragOver = (e, setDragState) => {
@@ -357,41 +328,33 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
     document.body.removeChild(textArea);
   };
 
-  const callGeminiWithBackoff = async (requestBody, maxRetries = 3) => {
+  const callGeminiWithBackoff = async (payload: unknown, maxRetries = 3) => {
     const delays = [1000, 2000, 4000];
 
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
       try {
         const response = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(payload),
         });
 
-        const raw = await response.text();
-        let data: any = {};
-        try {
-          data = raw ? JSON.parse(raw) : {};
-        } catch {
-          data = { error: raw || 'Server mengembalikan respons yang tidak valid.' };
-        }
+        const data = await response.json().catch(() => ({}));
 
         if (response.ok) return data;
 
-        const message = data?.error?.message || data?.error || `Request gagal (${response.status}).`;
         const retryable = response.status === 408 || response.status === 429 || response.status >= 500;
-
         if (!retryable || attempt === maxRetries) {
-          throw new Error(message);
+          throw new Error(data?.error || 'Terjadi gangguan saat memproses gambar.');
         }
-      } catch (err) {
-        if (attempt === maxRetries) throw err;
+      } catch (error) {
+        if (attempt === maxRetries) throw error;
       }
 
-      await new Promise(resolve => setTimeout(resolve, delays[attempt] || 1000));
+      await new Promise((resolve) => setTimeout(resolve, delays[attempt] ?? 1000));
     }
 
-    throw new Error('Gagal menghubungi server.');
+    throw new Error('Request gagal setelah beberapa percobaan.');
   };
 
   const generatePrompt = async () => {
@@ -445,14 +408,16 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 
       contents[0].parts.push({ text: userInstructionText });
 
-      const requestBody = {
-        systemInstruction: getSystemPrompt(brandName, specRule),
+      const payload = {
         contents,
+        systemInstruction: {
+          parts: [{ text: getSystemPrompt(brandName, specRule) }]
+        }
       };
 
-      const data = await callGeminiWithBackoff(requestBody);
+      const data = await callGeminiWithBackoff(payload);
 
-      const generatedText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (generatedText) {
         const cleanText = generatedText.replace(/```[a-z]*\n?/gi, '').trim();
         setOutputPrompt(cleanText);
@@ -1041,7 +1006,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 }
 
 // --- KOMPONEN UTAMA (APP) ---
-export default function App() {
+export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('FONCE');
   const [generatingTabs, setGeneratingTabs] = useState({});
 
