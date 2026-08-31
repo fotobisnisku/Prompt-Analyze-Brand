@@ -18,7 +18,7 @@ const apiKey = import.meta.env?.VITE_GEMINI_API_KEY || "";
 
 // --- DATA DICTIONARIES ---
 
-const FONCE_PRODUCT_DETAILS = {
+const FONCE_PRODUCT_DETAILS: Record<string, string> = {
   "Wild Garden": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Wild Garden" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Winter Bloom": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Winter Bloom" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
   "Roses Vanille": `A smooth glossy clear thick-glass perfume bottle with a heavy base, filled with pale yellow translucent liquid. Topped with a glossy black plastic cylindrical cap. The bottle body features minimalist black printed typography: "foncé A TIMELESS SCENT" logo on the left, separated by a central vertical line from the bold text "Roses Vanille" "EXTRAIT DE PARFUM" on the right. A transparent internal pump tube is visible inside.`,
@@ -44,7 +44,7 @@ const FONCE_PRODUCT_DETAILS = {
   "Grand Gala": `A smooth glossy clear thick-glass perfume bottle with a heavy flat base, filled with a translucent smoked black gradient liquid that transitions into a darker tone toward the bottom. The bottle features rounded shoulders with a clean minimalist cylindrical silhouette. Topped with a tall glossy black plastic cylindrical cap. A thin transparent internal pump tube is visible inside. The front surface features centered gold metallic typography: the brand name foncé, followed by a small letter x and the JFC JAKARTA FRAGRANCE CLUB logo, above the product name GRAND GALA in large elegant serif lettering, with Extrait De Parfum underneath and Special Collection 50 ml near the lower edge.`
 };
 
-const PREDIRE_PRODUCT_DETAILS = {
+const PREDIRE_PRODUCT_DETAILS: Record<string, string> = {
   "Orange Poivree": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of transparent cylindrical glass with a thick orange-colored base and thick orange glass walls. Inside, the perfume liquid is a clear transparent orange, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Orange Poivree” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Delish Library": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of matte white cylindrical glass with a thick base and thick glass walls. Solid black text is directly printed on the glass bottle: “Predire” at the top, “Delish Library” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
   "Honey Of The Valley": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of honey-yellow cylindrical glass with a thick honey-yellow base and thick glass walls. Inside, the perfume liquid is a clear transparent honey yellow, complete with a clear spray tube curving down to the base. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Honey Of The Valley” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`,
@@ -53,7 +53,7 @@ const PREDIRE_PRODUCT_DETAILS = {
   "Or Noir Absolu": `A cylindrical perfume bottle. It features a deep black cylindrical cap with a smooth surface and a glossy finish. The bottle is made of fully glossy black cylindrical glass. Solid white text is directly printed on the glass bottle: “Predire” at the top, “Or Noir Absolu” in the center, and “50ml Extrait De Perfume” at the bottom, all in a clean minimalist font.`
 };
 
-const FEEL_ONE_ADULT_PRODUCTS = {
+const FEEL_ONE_ADULT_PRODUCTS: Record<string, string> = {
   "Sexy Lady": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy whitish-pink plastic spherical cap and contains a transparent pink liquid. A glossy whitish-pink label is printed directly onto the glass, featuring a lip icon graphic, with the main typography "Sexy Lady" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`,
   "The Gentleman": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy black plastic spherical cap and contains a transparent yellow liquid. A glossy black label is printed directly onto the glass, with the main typography "THE GENTLEMAN" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`,
   "Independent Woman": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy black plastic spherical cap and contains a transparent bright yellow liquid. A glossy black label is printed directly onto the glass, with the main typography "INDEPENDENT WOMAN" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`,
@@ -63,7 +63,7 @@ const FEEL_ONE_ADULT_PRODUCTS = {
   "Heartbeat": `A glossy transparent glass perfume bottle, square-shaped with rounded corners, featuring an embossed dotted texture on the right and left sides, and a transparent pump tube mechanism inside. The bottle has a glossy cornflower blue plastic spherical cap and contains a transparent light blue liquid. A glossy white label is printed directly onto the glass, featuring an electrocardiogram graphic, with the main typography "HEARTBEAT" in the center, followed by smaller text below reading "extrait de parfum", "℮ 35 ml 1.2 fl.oz", and "vaporisateur natural spray" at the very bottom.`
 };
 
-const FEEL_ONE_KIDS_PRODUCTS = {
+const FEEL_ONE_KIDS_PRODUCTS: Record<string, string> = {
   "Bunny Cloud": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear pink liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Bunny Cloud, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Butterfly Bloom": `A bottle of perfume with a perfect glossy pink plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear pink liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Butterfly Bloom, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
   "Cuddle Puppy": `A bottle of perfume with a perfect glossy white plastic ball cap. A glossy transparent glass cylindrical bottle with a thick glass base contains a clear yellowish liquid, displaying the transparent pump mechanism inside. On the bottle body, there is a label with a cartoon illustration of Cuddle Puppy, small text at the bottom "EAU DE PARFUM ℮ 35 ml 1.18 fl.oz.", and a small circular monogram logo.`,
@@ -91,7 +91,7 @@ const LOCK_OPTIONS = [
   "Framing", "Mood"
 ];
 
-const BRANDS = {
+const BRANDS: Record<string, any> = {
   FONCE: {
     name: "Foncé",
     details: FONCE_PRODUCT_DETAILS,
@@ -115,7 +115,7 @@ const BRANDS = {
   }
 };
 
-const getSystemPrompt = (brandName, specRule) => `
+const getSystemPrompt = (brandName: string, specRule: string) => `
 MASTER PROMPT
 PHOTOGRAPHY REFERENCE ANALYZER & FULL PRODUCT SPECIFICATION INJECTION ENGINE
 ════════════════════════════════════════════════════════════════
@@ -148,19 +148,19 @@ FINAL PROMPT FORMAT:
 [Shot Type] of [Subject: Full Unabridged Product Identity & Exact Specifications for ALL selected products arranged together], [Pose + Framing + Composition], in/against [Environment + Background], color palette – [Dominant + Accent + Shadow Tone + Highlight Tone], [Surface Finish], [Creative Direction], Atmosphere – [Mood], [Symbolism - if relevant], hyperrealistic detail, ultra sharp focus, [Lighting + Aesthetic], shot on [Camera + Lens + Technical].
 `;
 
-function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) {
+function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }: any) {
   const { name: brandName, details: productDetailsMap, storageKey, specRule, hasCategories, adultProducts, kidsProducts } = brandConfig;
   const brandProducts = Object.keys(productDetailsMap);
 
-  const [mainImage, setMainImage] = useState(null);
-  const [charImage, setCharImage] = useState(null);
+  const [mainImage, setMainImage] = useState<any>(null);
+  const [charImage, setCharImage] = useState<any>(null);
   const [isDraggingMain, setIsDraggingMain] = useState(false);
   const [isDraggingChar, setIsDraggingChar] = useState(false);
   
-  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [activeCategoryTab, setActiveCategoryTab] = useState('ALL');
 
-  const [lockedParams, setLockedParams] = useState([]);
+  const [lockedParams, setLockedParams] = useState<string[]>([]);
   const [additionalText, setAdditionalText] = useState('');
   
   const [isGenerating, setIsGenerating] = useState(false);
@@ -169,7 +169,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
   const [error, setError] = useState('');
   const [isCopied, setIsCopied] = useState(false);
 
-  const [history, setHistory] = useState(() => {
+  const [history, setHistory] = useState<any[]>(() => {
     try {
       const saved = localStorage.getItem(storageKey);
       return saved ? JSON.parse(saved) : [];
@@ -178,7 +178,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
     }
   });
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [copiedHistoryId, setCopiedHistoryId] = useState(null);
+  const [copiedHistoryId, setCopiedHistoryId] = useState<string | null>(null);
 
   useEffect(() => {
     if (onGeneratingStateChange) {
@@ -197,13 +197,13 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
   const [cursorPos, setCursorPos] = useState({ x: -1000, y: -1000 });
   const [smoothPos, setSmoothPos] = useState({ x: -1000, y: -1000 });
 
-  const mainInputRef = useRef(null);
-  const charInputRef = useRef(null);
-  const requestRef = useRef(null);
+  const mainInputRef = useRef<HTMLInputElement>(null);
+  const charInputRef = useRef<HTMLInputElement>(null);
+  const requestRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!isActive) return;
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       setCursorPos({ x: e.clientX, y: e.clientY });
     };
 
@@ -231,7 +231,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
   }, [cursorPos, isActive]);
 
   useEffect(() => {
-    let interval;
+    let interval: ReturnType<typeof setInterval>;
     if (isGenerating) {
       const statuses = [
         "Menganalisa DNA visual...", 
@@ -249,7 +249,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
     return () => clearInterval(interval);
   }, [isGenerating, brandName]);
 
-  const processImageFile = (file, setImageFn) => {
+  const processImageFile = (file: File, setImageFn: any) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
       setError('Harap unggah file gambar yang valid.');
@@ -265,33 +265,33 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
         file: file,
         dataUrl: reader.result,
         mimeType: file.type,
-        base64: reader.result.split(',')[1]
+        base64: (reader.result as string).split(',')[1]
       });
       setError('');
     };
     reader.readAsDataURL(file);
   };
 
-  const handleImageUpload = (e, setImageFn) => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setImageFn: any) => {
     const file = e.target.files?.[0];
     if (file) {
       processImageFile(file, setImageFn);
     }
   };
 
-  const handleDragOver = (e, setDragState) => {
+  const handleDragOver = (e: React.DragEvent, setDragState: any) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(true);
   };
 
-  const handleDragLeave = (e, setDragState) => {
+  const handleDragLeave = (e: React.DragEvent, setDragState: any) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(false);
   };
 
-  const handleDrop = (e, setImageFn, setDragState) => {
+  const handleDrop = (e: React.DragEvent, setImageFn: any, setDragState: any) => {
     e.preventDefault();
     e.stopPropagation();
     setDragState(false);
@@ -301,7 +301,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
     }
   };
 
-  const toggleSelection = (item, list, setList) => {
+  const toggleSelection = (item: string, list: string[], setList: any) => {
     if (list.includes(item)) {
       setList(list.filter(i => i !== item));
     } else {
@@ -319,7 +319,7 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
     });
   };
 
-  const callGeminiWithBackoff = async (payload, maxRetries = 5) => {
+  const callGeminiWithBackoff = async (payload: any, maxRetries = 5) => {
     const delays = [1000, 2000, 4000, 8000, 16000];
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
@@ -381,7 +381,7 @@ CRITICAL ENFORCEMENT: Exactly ${productCount} product(s) are selected (${selecte
 You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH selected product into the SUBJECT section of your output prompt. DO NOT summarize or omit any detail.`
         : `Analyze the attached MAIN REFERENCE IMAGE based on the system instructions and construct the photography prompt.`;
 
-      const contents = [
+      const contents: any[] = [
         {
           role: "user",
           parts: [
@@ -426,14 +426,14 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
       } else {
         throw new Error('AI tidak memberikan respon teks.');
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || "Terjadi kesalahan sistem.");
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const copyHistoryPrompt = (item) => {
+  const copyHistoryPrompt = (item: any) => {
     navigator.clipboard.writeText(item.prompt).then(() => {
       setCopiedHistoryId(item.id);
       setTimeout(() => setCopiedHistoryId(null), 2000);
@@ -442,7 +442,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
     });
   };
 
-  const restoreHistoryItem = (item) => {
+  const restoreHistoryItem = (item: any) => {
     setOutputPrompt(item.prompt);
     if (item.products && item.products.length > 0) {
       setSelectedProducts(item.products);
@@ -458,7 +458,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 
   return (
     <div className={isActive ? 'contents' : 'hidden'}>
-      {/* Smooth Brush Glow Pointer Layer */}
       <div 
         className="pointer-events-none fixed inset-0 z-0 transition-opacity duration-700"
         style={{
@@ -472,7 +471,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
         }}
       />
 
-      {/* Floating History Toggle Button */}
       <div className="fixed top-4 right-4 md:top-6 md:right-6 z-40 mt-16 md:mt-14">
         <button
           onClick={() => setIsHistoryOpen(true)}
@@ -491,7 +489,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 
       <main className="flex-grow flex flex-col items-center justify-center py-8 px-4 md:px-6 w-full max-w-4xl mx-auto relative z-10 pt-24 md:pt-28">
         
-        {/* Minimalist Header */}
         <div className="mb-8 text-center flex flex-col items-center">
           <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-semibold tracking-widest uppercase mb-3 shadow-sm">
             <span>{brandName}</span>
@@ -501,10 +498,8 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
           </h1>
         </div>
 
-        {/* Frosted Glass Main Card */}
         <div className="w-full bg-white/[0.08] backdrop-blur-2xl p-6 md:p-9 rounded-[32px] card-shadow-frosted border border-white/20 relative">
           
-          {/* Disappearing Error Alert */}
           <div className={`transition-all duration-500 ease-in-out overflow-hidden ${error ? 'max-h-24 opacity-100 mb-6' : 'max-h-0 opacity-0 mb-0'}`}>
             <div className="bg-red-500/20 text-red-200 p-3.5 rounded-2xl flex items-center gap-3 border border-red-400/30 text-xs font-semibold backdrop-blur-md">
               <AlertCircle className="shrink-0 text-red-400" size="{16}"/>
@@ -513,9 +508,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
           </div>
 
           <div className="space-y-7">
-            {/* Image Upload Area */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Main Reference */}
               <div className="flex flex-col items-center">
                 <div className="text-center mb-2.5">
                   <div className="text-xs font-bold text-white tracking-wide uppercase">
@@ -562,7 +555,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
                 </div>
               </div>
 
-              {/* Character Reference */}
               <div className="flex flex-col items-center">
                 <div className="text-center mb-2.5">
                   <div className="text-xs font-bold text-white tracking-wide uppercase">
@@ -610,7 +602,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
               </div>
             </div>
 
-            {/* Product Library Section */}
             <div>
               <div className="flex items-center justify-between mb-3">
                 <label className="text-xs font-bold text-white tracking-wide uppercase">
@@ -747,7 +738,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
               </div>
             </div>
 
-            {/* Lock Parameters */}
             <div 
               className={`transition-all duration-500 ease-in-out overflow-hidden ${
                 selectedProducts.length > 0 ? 'max-h-48 opacity-100 pt-1' : 'max-h-0 opacity-0 pt-0'
@@ -786,7 +776,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
               </div>
             </div>
 
-            {/* Additional Instructions */}
             <div>
               <label className="block text-xs font-bold text-white tracking-wide uppercase mb-2">
                 Additional Instructions
@@ -799,7 +788,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
               />
             </div>
 
-            {/* Generate Button */}
             <div className="flex justify-center pt-1">
               <button
                 onClick={generatePrompt}
@@ -822,7 +810,6 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
             </div>
           </div>
 
-          {/* Generated Output */}
           <div 
             className={`transition-all duration-500 ease-in-out overflow-hidden ${
               outputPrompt && !isGenerating ? 'max-h-[600px] opacity-100 mt-8 pt-6 border-t border-white/20' : 'max-h-0 opacity-0 mt-0 pt-0'
@@ -852,13 +839,11 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
           </div>
         </div>
 
-        {/* Minimal Footer */}
         <div className="mt-8 text-white/40 text-[11px] font-medium tracking-wider uppercase">
           Automated Visual Intelligence &bull; {brandName}
         </div>
       </main>
 
-      {/* History Slide-out Drawer */}
       <div 
         className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
           isHistoryOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
@@ -964,7 +949,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 
                 {item.products && item.products.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-2">
-                    {item.products.map((p, idx) => (
+                    {item.products.map((p: string, idx: number) => (
                       <span key={idx} className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/15 text-white border border-white/20">
                         {p}
                       </span>
@@ -986,7 +971,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('FONCE');
-  const [generatingTabs, setGeneratingTabs] = useState({});
+  const [generatingTabs, setGeneratingTabs] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const link = document.createElement('link');
@@ -1046,7 +1031,7 @@ export default function Dashboard() {
     { id: 'FEEL_ONE', label: 'Feel One' }
   ];
 
-  const handleTabGeneratingChange = (tabId, isGenerating) => {
+  const handleTabGeneratingChange = (tabId: string, isGenerating: boolean) => {
     setGeneratingTabs(prev => ({
       ...prev,
       [tabId]: isGenerating
@@ -1093,7 +1078,7 @@ export default function Dashboard() {
       </nav>
 
       {tabs.map((tab) => (
-        <PromptGeneratorTab brandConfig="{BRANDS[tab.id]}" isActive="{activeTab" key="{tab.id}" onGeneratingStateChange="{(isGen)" tab.id}> handleTabGeneratingChange(tab.id, isGen)}
+        <PromptGeneratorTab brandConfig="{BRANDS[tab.id]}" isActive="{activeTab" key="{tab.id}" onGeneratingStateChange="{(isGen:" tab.id}> handleTabGeneratingChange(tab.id, isGen)}
         />
       ))}
       
