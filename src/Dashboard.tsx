@@ -1006,12 +1006,12 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
 // --- KOMPONEN UTAMA (APP) ---
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('FONCE');
-  const [generatingTabs, setGeneratingTabs] = useState<any>({});
+  const [generatingTabs, setGeneratingTabs] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = '[https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap](https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap)';
+    link.href = 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap';
     document.head.appendChild(link);
 
     const style = document.createElement('style');
@@ -1066,8 +1066,8 @@ export default function Dashboard() {
     { id: 'FEEL_ONE', label: 'Feel One' }
   ];
 
-  const handleTabGeneratingChange = (tabId: any, isGenerating: any) => {
-    setGeneratingTabs((prev: any) => ({
+  const handleTabGeneratingChange = (tabId: string, isGenerating: boolean) => {
+    setGeneratingTabs(prev => ({
       ...prev,
       [tabId]: isGenerating
     }));
@@ -1103,8 +1103,9 @@ export default function Dashboard() {
                     : 'bg-white/5 text-zinc-400 border-white/10 hover:bg-white/10 hover:text-white hover:border-white/20'
                   }`}
               >
+                {/* Error Loader2 sebelumnya sudah diperbaiki di sini */}
                 {isTabGenerating && (
-                  <Loader2 ${isActive 'text-amber-400'}`} 'text-black' : ? className="{`animate-spin" size="{12}"/>
+                  <Loader2 className={`animate-spin ${isActive ? 'text-black' : 'text-amber-400'}`} size={12} />
                 )}
                 <span>{tab.label}</span>
               </button>
@@ -1113,10 +1114,13 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      {/* Semua Tab tetap ter-mount agar proses generate dapat berjalan serentak 
-          di latar belakang dan tidak ter-reset saat berpindah antar tab */}
+      {/* Error PromptGeneratorTab sebelumnya sudah diperbaiki di sini */}
       {tabs.map((tab) => (
-        <PromptGeneratorTab brandConfig="{BRANDS[tab.id]}" isActive="{activeTab" key="{tab.id}" onGeneratingStateChange="{(isGen:" tab.id}> handleTabGeneratingChange(tab.id, isGen)}
+        <PromptGeneratorTab 
+          key={tab.id}
+          brandConfig={BRANDS[tab.id as keyof typeof BRANDS]} 
+          isActive={activeTab === tab.id} 
+          onGeneratingStateChange={(isGen: boolean) => handleTabGeneratingChange(tab.id, isGen)}
         />
       ))}
       
