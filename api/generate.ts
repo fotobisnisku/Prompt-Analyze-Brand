@@ -1,8 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-const DEFAULT_MODEL = 'gemini-2.5-flash';
+const KIE_BASE_URL =
+  'https://api.kie.ai/gemini-2.5-flash/v1/chat/completions';
 
-function json(
+function sendJson(
   res: VercelResponse,
   status: number,
   data: Record<string, unknown>
@@ -18,42 +19,38 @@ export default async function handler(
   res: VercelResponse
 ) {
   // --------------------------------------------------
-  // 1. METHOD CHECK
+  // METHOD
   // --------------------------------------------------
 
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
 
-    return json(res, 405, {
-      error: 'Method tidak diizinkan. Gunakan POST /api/generate.'
+    return sendJson(res, 405, {
+      error: 'Method tidak diizinkan.'
     });
   }
 
   // --------------------------------------------------
-  // 2. API KEY
+  // KIE API KEY
   // --------------------------------------------------
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.KIE_API_KEY;
 
   if (!apiKey) {
-    console.error('GEMINI_API_KEY is not configured.');
+    console.error('KIE_API_KEY is missing.');
 
-    return json(res, 500, {
+    return sendJson(res, 500, {
       error:
-        'GEMINI_API_KEY belum dikonfigurasi di Vercel Environment Variables.'
+        'KIE_API_KEY belum dikonfigurasi di Vercel Environment Variables.'
     });
   }
-
-  // --------------------------------------------------
-  // 3. READ REQUEST
-  // --------------------------------------------------
 
   try {
     const body = req.body;
 
     if (!body || typeof body !== 'object') {
-      return json(res, 400, {
-        error: 'Request body harus berupa JSON object.'
+      return sendJson(res, 400, {
+        error: 'Request body tidak valid.'
       });
     }
 
@@ -61,120 +58,148 @@ export default async function handler(
     const systemInstruction = body.systemInstruction;
 
     if (!Array.isArray(contents) || contents.length === 0) {
-      return json(res, 400, {
-        error: 'Field "contents" wajib berupa array dan tidak boleh kosong.'
+      return sendJson(res, 400, {
+        error: 'contents tidak ditemukan.'
       });
     }
 
     // --------------------------------------------------
-    // 4. BASIC PAYLOAD SIZE PROTECTION
+    // CONVERT GEMINI FORMAT → KIE OPENAI FORMAT
     // --------------------------------------------------
 
-    const serializedBody = JSON.stringify(body);
-    const payloadBytes = Buffer.byteLength(serializedBody, 'utf8');
+    const messages: Array<{
+      role: string;
+      content: any[];
+    }> = [];
 
-    // Safety limit for the serverless request.
-    // Images are sent as Base64, so the JSON can become large quickly.
-    const MAX_PAYLOAD_BYTES = 18 * 1024 * 1024;
+    // System instruction menjadi system message
+    if (
+      systemInstruction?.parts &&
+      Array.isArray(systemInstruction.parts)
+    ) {
+      const systemText = systemInstruction.parts
+        .map((part: any) => part?.text || '')
+        .filter(Boolean)
+        .join('\n');
 
-    if (payloadBytes > MAX_PAYLOAD_BYTES) {
-      return json(res, 413, {
-        error:
-          'Payload terlalu besar. Resize/compress gambar lalu coba lagi.'
-      });
+      if (systemText) {
+        messages.push({
+          role: 'system',
+          content: [
+            {
+              type: 'text',
+              text: systemText
+            }
+          ]
+        });
+      }
     }
 
     // --------------------------------------------------
-    // 5. VALIDATE IMAGE DATA
+    // CONVERT USER CONTENT
     // --------------------------------------------------
 
     for (const content of contents) {
-      if (!content || !Array.isArray(content.parts)) {
-        continue;
+      const role =
+        content?.role === 'assistant'
+          ? 'assistant'
+          : 'user';
+
+      const parts = Array.isArray(content?.parts)
+        ? content.parts
+        : [];
+
+      const convertedParts: any[] = [];
+
+      for (const part of parts) {
+        // Text
+        if (typeof part?.text === 'string') {
+          convertedParts.push({
+            type: 'text',
+            text: part.text
+          });
+        }
+
+        // Image
+        if (part?.inlineData) {
+          const mimeType =
+            part.inlineData.mimeType || 'image/jpeg';
+
+          const base64 =
+            part.inlineData.data;
+
+          if (
+            typeof base64 === 'string' &&
+            base64.length > 0
+          ) {
+            convertedParts.push({
+              type: 'image_url',
+              image_url: {
+                url: `data:${mimeType};base64,${base64}`
+              }
+            });
+          }
+        }
       }
 
-      for (const part of content.parts) {
-        if (!part?.inlineData) {
-          continue;
-        }
-
-        const mimeType = part.inlineData.mimeType;
-        const base64 = part.inlineData.data;
-
-        if (
-          typeof mimeType !== 'string' ||
-          !mimeType.startsWith('image/')
-        ) {
-          return json(res, 400, {
-            error: 'Format MIME gambar tidak valid.'
-          });
-        }
-
-        if (typeof base64 !== 'string' || base64.length === 0) {
-          return json(res, 400, {
-            error: 'Data gambar kosong atau tidak valid.'
-          });
-        }
-
-        // ~7.5 MB raw image equivalent.
-        const MAX_BASE64_CHARS = 10_000_000;
-
-        if (base64.length > MAX_BASE64_CHARS) {
-          return json(res, 413, {
-            error:
-              'Ukuran gambar terlalu besar. Gunakan gambar yang lebih kecil.'
-          });
-        }
+      if (convertedParts.length > 0) {
+        messages.push({
+          role,
+          content: convertedParts
+        });
       }
     }
 
+    if (messages.length === 0) {
+      return sendJson(res, 400, {
+        error:
+          'Tidak ada pesan yang dapat dikirim ke KIE.'
+      });
+    }
+
     // --------------------------------------------------
-    // 6. MODEL
+    // KIE REQUEST
     // --------------------------------------------------
 
-    const model =
-      process.env.GEMINI_MODEL?.trim() || DEFAULT_MODEL;
+    const kiePayload = {
+      model: 'gemini-2.5-flash',
 
-    // --------------------------------------------------
-    // 7. GEMINI REQUEST
-    // --------------------------------------------------
+      messages,
 
-    const geminiPayload = {
-      contents,
-      ...(systemInstruction
-        ? {
-            systemInstruction
-          }
-        : {}),
-      generationConfig: {
-        temperature: 0.7,
-        topP: 0.95,
-        maxOutputTokens: 8192
-      }
+      stream: false,
+
+      temperature: 0.7,
+
+      top_p: 0.95,
+
+      max_tokens: 8192
     };
 
-    const controller = new AbortController();
+    console.log(
+      '[KIE] Sending Gemini 2.5 Flash request'
+    );
+
+    const controller =
+      new AbortController();
 
     const timeout = setTimeout(() => {
       controller.abort();
     }, 55_000);
 
-    let geminiResponse: Response;
+    let kieResponse: Response;
 
     try {
-      geminiResponse = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
-          model
-        )}:generateContent`,
+      kieResponse = await fetch(
+        KIE_BASE_URL,
         {
           method: 'POST',
 
           headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': apiKey
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
           },
 
-          body: JSON.stringify(geminiPayload),
+          body: JSON.stringify(kiePayload),
 
           signal: controller.signal
         }
@@ -184,12 +209,13 @@ export default async function handler(
     }
 
     // --------------------------------------------------
-    // 8. READ GEMINI RESPONSE
+    // READ RESPONSE
     // --------------------------------------------------
 
-    const responseText = await geminiResponse.text();
+    const responseText =
+      await kieResponse.text();
 
-    let data: any;
+    let data: any = {};
 
     try {
       data = responseText
@@ -197,122 +223,133 @@ export default async function handler(
         : {};
     } catch {
       console.error(
-        'Gemini returned invalid JSON:',
+        '[KIE] Invalid JSON response:',
         responseText.slice(0, 500)
       );
 
-      return json(res, 502, {
+      return sendJson(res, 502, {
         error:
-          'Gemini mengembalikan response yang tidak valid.'
+          'KIE mengembalikan response yang tidak valid.'
       });
     }
 
     // --------------------------------------------------
-    // 9. GEMINI ERROR
+    // KIE ERROR
     // --------------------------------------------------
 
-    if (!geminiResponse.ok) {
+    if (!kieResponse.ok) {
       console.error(
-        'Gemini API error:',
-        geminiResponse.status,
+        '[KIE ERROR]',
+        kieResponse.status,
         data
       );
 
       const message =
+        data?.msg ||
         data?.error?.message ||
-        data?.error?.status ||
-        'Gemini gagal memproses request.';
+        'KIE gagal memproses request.';
 
-      if (geminiResponse.status === 429) {
-        return json(res, 429, {
-          error: `Gemini rate limit: ${message}`
-        });
-      }
-
-      if (geminiResponse.status >= 500) {
-        return json(res, 502, {
-          error: `Gemini server error: ${message}`
-        });
-      }
-
-      if (
-        geminiResponse.status === 401 ||
-        geminiResponse.status === 403
-      ) {
-        return json(res, 502, {
+      if (kieResponse.status === 401) {
+        return sendJson(res, 401, {
           error:
-            'Gemini API Key ditolak. Periksa GEMINI_API_KEY di Vercel.'
+            'KIE API token tidak valid atau tidak memiliki akses.'
         });
       }
 
-      return json(res, 400, {
-        error: `Gemini: ${message}`
+      if (kieResponse.status === 429) {
+        return sendJson(res, 429, {
+          error:
+            `KIE rate limit: ${message}`
+        });
+      }
+
+      if (kieResponse.status >= 500) {
+        return sendJson(res, 502, {
+          error:
+            `KIE server error: ${message}`
+        });
+      }
+
+      return sendJson(res, 400, {
+        error:
+          `KIE: ${message}`
       });
     }
 
     // --------------------------------------------------
-    // 10. CHECK GENERATED TEXT
+    // NORMALIZE RESPONSE
+    //
+    // Dashboard.tsx sekarang mencari:
+    //
+    // candidates[0]
+    //   .content
+    //   .parts[0]
+    //   .text
+    //
+    // KIE menggunakan:
+    //
+    // choices[0]
+    //   .message
+    //   .content
+    //
+    // Jadi kita convert response KIE ke format yang
+    // Dashboard.tsx sudah pahami.
     // --------------------------------------------------
 
     const generatedText =
-      data?.candidates?.[0]?.content?.parts
-        ?.filter(
-          (part: any) =>
-            typeof part?.text === 'string'
-        )
-        ?.map(
-          (part: any) => part.text
-        )
-        ?.join('\n')
-        ?.trim();
+      data?.choices?.[0]?.message?.content;
 
-    if (!generatedText) {
-      const finishReason =
-        data?.candidates?.[0]?.finishReason;
-
-      const blockReason =
-        data?.promptFeedback?.blockReason;
-
+    if (
+      typeof generatedText !== 'string' ||
+      !generatedText.trim()
+    ) {
       console.error(
-        'Gemini returned no text:',
-        {
-          finishReason,
-          blockReason,
-          response: data
-        }
+        '[KIE] No generated text:',
+        data
       );
 
-      if (blockReason) {
-        return json(res, 502, {
-          error:
-            `Gemini memblokir request: ${blockReason}.`
-        });
-      }
-
-      return json(res, 502, {
+      return sendJson(res, 502, {
         error:
-          finishReason
-            ? `Gemini tidak menghasilkan teks. Finish reason: ${finishReason}.`
-            : 'Gemini tidak memberikan output teks.'
+          'KIE tidak memberikan output teks.'
       });
     }
 
     // --------------------------------------------------
-    // 11. RETURN ORIGINAL GEMINI RESPONSE
-    // --------------------------------------------------
-    //
-    // Dashboard.tsx membaca:
-    //
-    // data.candidates[0].content.parts[0].text
-    //
-    // Jadi kita kembalikan response Gemini apa adanya.
+    // RETURN GEMINI-COMPATIBLE RESPONSE
     // --------------------------------------------------
 
-    return json(res, 200, data);
+    return sendJson(res, 200, {
+      candidates: [
+        {
+          content: {
+            parts: [
+              {
+                text: generatedText
+              }
+            ]
+          }
+        }
+      ],
+
+      usageMetadata: {
+        promptTokenCount:
+          data?.usage?.prompt_tokens || 0,
+
+        candidatesTokenCount:
+          data?.usage?.completion_tokens || 0,
+
+        totalTokenCount:
+          data?.usage?.total_tokens || 0
+      },
+
+      provider: 'kie.ai',
+
+      model: 'gemini-2.5-flash'
+    });
 
   } catch (error: unknown) {
     console.error(
-      'Unexpected /api/generate error:',
+      '[KIE] Unexpected server error:',
       error
     );
 
@@ -321,14 +358,16 @@ export default async function handler(
         ? error.message
         : 'Unknown server error';
 
-    if (/abort|timeout/i.test(message)) {
-      return json(res, 504, {
+    if (
+      /abort|timeout/i.test(message)
+    ) {
+      return sendJson(res, 504, {
         error:
-          'Request ke Gemini timeout. Coba Generate lagi.'
+          'Request ke KIE timeout. Coba Generate lagi.'
       });
     }
 
-    return json(res, 500, {
+    return sendJson(res, 500, {
       error:
         `Server error: ${message}`
     });
