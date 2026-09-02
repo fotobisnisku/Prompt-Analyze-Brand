@@ -36,4 +36,4 @@ export const KIE_API_BASE_URL =
 // different endpoint paths for different models.
 export const KIE_API_ENDPOINT =
   process.env.KIE_API_ENDPOINT ||
-  `${KIE_API_BASE_URL}/https://api.kie.ai/gemini-3-6-flash-openai/v1/chat/completions`;
+  `${KIE_API_BASE_URL}/v1/chat/completions`;
