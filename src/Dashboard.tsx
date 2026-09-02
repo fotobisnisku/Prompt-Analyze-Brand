@@ -369,10 +369,12 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
           return data;
         }
 
-        const serverMessage =
-          data?.error ||
-          data?.message ||
-          `Server mengembalikan HTTP ${response.status}.`;
+        let serverMessage = data?.error || data?.message || `Server mengembalikan HTTP ${response.status}.`;
+        
+        // Jika error berupa JSON Object, ekstrak pesannya atau jadikan string
+        if (typeof serverMessage === 'object') {
+          serverMessage = serverMessage.message || JSON.stringify(serverMessage);
+        }
 
         const retryable =
           response.status === 408 ||
