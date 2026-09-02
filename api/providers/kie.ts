@@ -13,7 +13,7 @@ import {
 
 export type KieMessage = {
   role: 'system' | 'user' | 'assistant';
-  content: Array<{
+  content: string | Array<{
     type: 'text' | 'image_url';
     text?: string;
     image_url?: {
