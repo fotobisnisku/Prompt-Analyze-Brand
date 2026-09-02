@@ -459,7 +459,7 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
       contents[0].parts.push({ text: userInstructionText });
 
       const payload = {
-        model: 'grok-4-6',
+        model: 'gemini-3-6-flash-openai',
         temperature: 0.7,
         topP: 0.95,
         maxTokens: 8192,
