@@ -10,6 +10,9 @@ export const config = {
   },
 };
 
+// TAMBAHKAN BARIS INI (Set maksimal durasi eksekusi ke 60 detik)
+export const maxDuration = 60;
+
 function sendJson(
   res: VercelResponse,
   status: number,
