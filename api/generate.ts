@@ -5,7 +5,7 @@ import { generateWithKie, type KieMessage } from './providers/kie.js';
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '10mb',
+      sizeLimit: '4.5mb',
     },
   },
 };
