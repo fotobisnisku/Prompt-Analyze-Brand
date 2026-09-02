@@ -9,7 +9,7 @@ import {
   AI_MODEL,
   KIE_API_ENDPOINT,
   KIE_API_KEY,
-} from './config.js';
+} from './config';
 
 export type KieMessage = {
   role: 'system' | 'user' | 'assistant';
