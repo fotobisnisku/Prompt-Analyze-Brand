@@ -328,30 +328,80 @@ function PromptGeneratorTab({ brandConfig, isActive, onGeneratingStateChange }) 
     document.body.removeChild(textArea);
   };
 
+  // Semua request AI wajib lewat server-side /api/generate.
+  // API key KIE/Gemini tidak pernah dikirim atau dibaca dari browser.
   const callGeminiWithBackoff = async (payload: unknown, maxRetries = 3) => {
     const delays = [1000, 2000, 4000];
 
     for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+      let response: Response | null = null;
+
       try {
-        const response = await fetch('/api/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), 60000);
 
-        const data = await response.json().catch(() => ({}));
+        try {
+          response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          });
+        } finally {
+          window.clearTimeout(timeoutId);
+        }
 
-        if (response.ok) return data;
+        const rawText = await response.text();
 
-        const retryable = response.status === 408 || response.status === 429 || response.status >= 500;
+        let data: any = {};
+        if (rawText) {
+          try {
+            data = JSON.parse(rawText);
+          } catch {
+            data = { error: rawText.slice(0, 500) };
+          }
+        }
+
+        if (response.ok) {
+          return data;
+        }
+
+        const serverMessage =
+          data?.error ||
+          data?.message ||
+          `Server mengembalikan HTTP ${response.status}.`;
+
+        const retryable =
+          response.status === 408 ||
+          response.status === 429 ||
+          response.status >= 500;
+
         if (!retryable || attempt === maxRetries) {
-          throw new Error(data?.error || 'Terjadi gangguan saat memproses gambar.');
+          throw new Error(serverMessage);
         }
       } catch (error) {
-        if (attempt === maxRetries) throw error;
+        const isAbort =
+          error instanceof DOMException && error.name === 'AbortError';
+
+        if (isAbort) {
+          if (attempt === maxRetries) {
+            throw new Error(
+              'Request ke server timeout setelah 60 detik. Coba Generate lagi.'
+            );
+          }
+        } else if (attempt === maxRetries) {
+          throw error instanceof Error
+            ? error
+            : new Error('Request ke server gagal.');
+        }
       }
 
-      await new Promise((resolve) => setTimeout(resolve, delays[attempt] ?? 1000));
+      await new Promise((resolve) =>
+        setTimeout(resolve, delays[attempt] ?? 1000)
+      );
     }
 
     throw new Error('Request gagal setelah beberapa percobaan.');
@@ -409,6 +459,10 @@ You MUST embed the FULL, COMPLETE, and UNABRIDGED physical specification of EACH
       contents[0].parts.push({ text: userInstructionText });
 
       const payload = {
+        model: 'gemini-2.5-flash',
+        temperature: 0.7,
+        topP: 0.95,
+        maxTokens: 8192,
         contents,
         systemInstruction: {
           parts: [{ text: getSystemPrompt(brandName, specRule) }]
