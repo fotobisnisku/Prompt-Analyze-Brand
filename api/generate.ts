@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { generateWithKie, type KieMessage } from './providers/kie';
+import { generateWithKie, type KieMessage } from './providers/kie.js';
 
 // Allow image JSON payloads larger than the default body-parser limit.
 export const config = {
