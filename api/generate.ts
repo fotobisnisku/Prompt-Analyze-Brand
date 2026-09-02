@@ -1,42 +1,103 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { generateWithKie, type KieMessage } from './providers/kie.js';
 
-// Allow image JSON payloads larger than the default body-parser limit.
+// ============================================
+// 1. CONFIG & ENVIRONMENT VARIABLES
+// ============================================
+const AI_MODEL = process.env.AI_MODEL || 'gemini-3-6-flash-openai';
+const KIE_API_KEY = process.env.KIE_API_KEY || '';
+const KIE_API_BASE_URL = process.env.KIE_API_BASE_URL || 'https://api.kie.ai';
+// Typo HTTP ganda bawaan config.ts udah dibersihkan di sini
+const KIE_API_ENDPOINT = process.env.KIE_API_ENDPOINT || `${KIE_API_BASE_URL}/v1/chat/completions`;
+
+// ============================================
+// 2. TYPES
+// ============================================
+type KieMessage = {
+  role: 'system' | 'user' | 'assistant';
+  content: string | Array<{
+    type: 'text' | 'image_url';
+    text?: string;
+    image_url?: { url: string; };
+  }>;
+};
+
+type KieGenerateOptions = {
+  messages: KieMessage[];
+  model?: string;
+  temperature?: number;
+  top_p?: number;
+  max_tokens?: number;
+  signal?: AbortSignal;
+};
+
+// ============================================
+// 3. KIE PROVIDER LOGIC
+// ============================================
+async function generateWithKie(options: KieGenerateOptions) {
+  if (!KIE_API_KEY) {
+    throw new Error('KIE_API_KEY belum dikonfigurasi di Vercel Environment Variables.');
+  }
+
+  const model = options.model || AI_MODEL;
+  const payload = {
+    model,
+    messages: options.messages,
+    stream: false,
+    temperature: options.temperature ?? 0.7,
+    top_p: options.top_p ?? 0.95,
+    max_tokens: options.max_tokens ?? 8192,
+  };
+
+  console.log(`[KIE] Sending model: ${model}`);
+
+  const response = await fetch(KIE_API_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${KIE_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+    signal: options.signal,
+  });
+
+  const responseText = await response.text();
+  let data: any = {};
+
+  try {
+    data = responseText ? JSON.parse(responseText) : {};
+  } catch {
+    console.error('[KIE] Invalid JSON response:', responseText.slice(0, 500));
+    throw new Error('KIE mengembalikan response yang tidak valid.');
+  }
+
+  return { data, response };
+}
+
+// ============================================
+// 4. API ROUTE CONFIGURATION
+// ============================================
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '4.5mb',
+      sizeLimit: '4.5mb', // Batas aman maksimal untuk Vercel tier gratis
     },
   },
 };
+export const maxDuration = 60; // Izinkan API berjalan sampai 60 detik agar tidak timeout
 
-// TAMBAHKAN BARIS INI (Set maksimal durasi eksekusi ke 60 detik)
-export const maxDuration = 60;
-
-function sendJson(
-  res: VercelResponse,
-  status: number,
-  data: Record<string, unknown>
-) {
-  return res
-    .status(status)
-    .setHeader('Content-Type', 'application/json')
-    .json(data);
+function sendJson(res: VercelResponse, status: number, data: Record<string, unknown>) {
+  return res.status(status).setHeader('Content-Type', 'application/json').json(data);
 }
 
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
-) {
-  // CORS/preflight safety. Same-origin requests normally do not need this,
-  // but accepting OPTIONS prevents a proxy/browser preflight from becoming 405.
+// ============================================
+// 5. MAIN HANDLER
+// ============================================
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Allow', 'POST, OPTIONS');
     return res.status(204).end();
   }
 
-  // Health check: opening /api/generate in the browser must NOT produce 405.
-  // This also proves that Vercel is actually routing /api/generate to this file.
   if (req.method === 'GET') {
     return sendJson(res, 200, {
       ok: true,
@@ -57,121 +118,69 @@ export default async function handler(
     const body = req.body;
 
     if (!body || typeof body !== 'object') {
-      return sendJson(res, 400, {
-        error: 'Request body tidak valid.',
-      });
+      return sendJson(res, 400, { error: 'Request body tidak valid.' });
     }
 
     const contents = body.contents;
     const systemInstruction = body.systemInstruction;
 
     if (!Array.isArray(contents) || contents.length === 0) {
-      return sendJson(res, 400, {
-        error: 'contents tidak ditemukan.',
-      });
+      return sendJson(res, 400, { error: 'contents tidak ditemukan.' });
     }
 
     const messages: KieMessage[] = [];
 
-    if (
-      systemInstruction?.parts &&
-      Array.isArray(systemInstruction.parts)
-    ) {
+    if (systemInstruction?.parts && Array.isArray(systemInstruction.parts)) {
       const systemText = systemInstruction.parts
         .map((part: any) => part?.text || '')
         .filter(Boolean)
         .join('\n');
 
       if (systemText) {
-        messages.push({
-          role: 'system',
-          content: systemText,
-        });
+        messages.push({ role: 'system', content: systemText });
       }
     }
 
     for (const content of contents) {
-      const role: KieMessage['role'] =
-        content?.role === 'assistant' ? 'assistant' : 'user';
-
-      const parts = Array.isArray(content?.parts)
-        ? content.parts
-        : [];
-
+      const role: KieMessage['role'] = content?.role === 'assistant' ? 'assistant' : 'user';
+      const parts = Array.isArray(content?.parts) ? content.parts : [];
       const convertedParts: KieMessage['content'] = [];
 
       for (const part of parts) {
         if (typeof part?.text === 'string') {
-          convertedParts.push({
-            type: 'text',
-            text: part.text,
-          });
+          convertedParts.push({ type: 'text', text: part.text });
         }
-
         if (part?.inlineData) {
-          const mimeType =
-            part.inlineData.mimeType || 'image/jpeg';
+          const mimeType = part.inlineData.mimeType || 'image/jpeg';
           const base64 = part.inlineData.data;
 
-          if (
-            typeof base64 === 'string' &&
-            base64.length > 0
-          ) {
+          if (typeof base64 === 'string' && base64.length > 0) {
             convertedParts.push({
               type: 'image_url',
-              image_url: {
-                url: `data:${mimeType};base64,${base64}`,
-              },
+              image_url: { url: `data:${mimeType};base64,${base64}` },
             });
           }
         }
       }
 
       if (convertedParts.length > 0) {
-        messages.push({
-          role,
-          content: convertedParts,
-        });
+        messages.push({ role, content: convertedParts });
       }
     }
 
     if (messages.length === 0) {
-      return sendJson(res, 400, {
-        error: 'Tidak ada pesan yang dapat dikirim ke AI.',
-      });
+      return sendJson(res, 400, { error: 'Tidak ada pesan yang dapat dikirim ke AI.' });
     }
 
-    const model =
-      typeof body.model === 'string' && body.model.trim()
-        ? body.model
-        : 'gemini-2.5-flash';
-
-    const temperature =
-      typeof body.temperature === 'number'
-        ? body.temperature
-        : 0.7;
-
-    const topP =
-      typeof body.topP === 'number'
-        ? body.topP
-        : 0.95;
-
-    const maxTokens =
-      typeof body.maxTokens === 'number'
-        ? body.maxTokens
-        : 8192;
+    const model = typeof body.model === 'string' && body.model.trim() ? body.model : 'gemini-2.5-flash';
+    const temperature = typeof body.temperature === 'number' ? body.temperature : 0.7;
+    const topP = typeof body.topP === 'number' ? body.topP : 0.95;
+    const maxTokens = typeof body.maxTokens === 'number' ? body.maxTokens : 8192;
 
     const controller = new AbortController();
-    const timeout = setTimeout(
-      () => controller.abort(),
-      55_000
-    );
+    const timeout = setTimeout(() => controller.abort(), 55_000);
 
-    let providerResult: {
-      data: any;
-      response: Response;
-    };
-
+    let providerResult;
     try {
       providerResult = await generateWithKie({
         messages,
@@ -188,122 +197,42 @@ export default async function handler(
     const { data, response } = providerResult;
 
     if (!response.ok) {
-      console.error(
-        '[KIE ERROR]',
-        response.status,
-        data
-      );
+      console.error('[KIE ERROR]', response.status, data);
+      const message = data?.msg || data?.error?.message || data?.message || 'KIE gagal memproses request.';
 
-      const message =
-        data?.msg ||
-        data?.error?.message ||
-        data?.message ||
-        'KIE gagal memproses request.';
+      if (response.status === 401) return sendJson(res, 401, { error: 'KIE API token tidak valid atau tidak memiliki akses.' });
+      if (response.status === 429) return sendJson(res, 429, { error: `KIE rate limit: ${message}` });
+      if (response.status >= 500) return sendJson(res, 502, { error: `KIE server error: ${message}` });
 
-      if (response.status === 401) {
-        return sendJson(res, 401, {
-          error:
-            'KIE API token tidak valid atau tidak memiliki akses.',
-        });
-      }
-
-      if (response.status === 429) {
-        return sendJson(res, 429, {
-          error: `KIE rate limit: ${message}`,
-        });
-      }
-
-      if (response.status >= 500) {
-        return sendJson(res, 502, {
-          error: `KIE server error: ${message}`,
-        });
-      }
-
-      return sendJson(res, 400, {
-        error: `KIE: ${message}`,
-      });
+      return sendJson(res, 400, { error: `KIE: ${message}` });
     }
 
-    const generatedText =
-      data?.choices?.[0]?.message?.content;
+    const generatedText = data?.choices?.[0]?.message?.content;
 
-    if (
-      typeof generatedText !== 'string' ||
-      !generatedText.trim()
-    ) {
-      console.error(
-        '[KIE] No generated text:',
-        data
-      );
-
-      return sendJson(res, 502, {
-        error: 'KIE tidak memberikan output teks.',
-      });
+    if (typeof generatedText !== 'string' || !generatedText.trim()) {
+      console.error('[KIE] No generated text:', data);
+      return sendJson(res, 502, { error: 'KIE tidak memberikan output teks.' });
     }
 
     return sendJson(res, 200, {
-      candidates: [
-        {
-          content: {
-            parts: [
-              {
-                text: generatedText,
-              },
-            ],
-          },
-        },
-      ],
+      candidates: [{ content: { parts: [{ text: generatedText }] } }],
       usageMetadata: {
-        promptTokenCount:
-          data?.usage?.prompt_tokens || 0,
-        candidatesTokenCount:
-          data?.usage?.completion_tokens || 0,
-        totalTokenCount:
-          data?.usage?.total_tokens || 0,
+        promptTokenCount: data?.usage?.prompt_tokens || 0,
+        candidatesTokenCount: data?.usage?.completion_tokens || 0,
+        totalTokenCount: data?.usage?.total_tokens || 0,
       },
       provider: 'kie.ai',
       model,
     });
+
   } catch (error: unknown) {
-    console.error(
-      '[AI PROVIDER] Unexpected server error:',
-      error
-    );
+    console.error('[AI PROVIDER] Unexpected server error:', error);
+    const message = error instanceof Error ? error.message : 'Unknown server error';
 
-    const message =
-      error instanceof Error
-        ? error.message
-        : 'Unknown server error';
+    if (/abort|timeout/i.test(message)) return sendJson(res, 504, { error: 'Request ke KIE timeout. Coba Generate lagi.' });
+    if (/KIE_API_KEY belum dikonfigurasi/i.test(message)) return sendJson(res, 500, { error: message });
+    if (/KIE mengembalikan response yang tidak valid/i.test(message)) return sendJson(res, 502, { error: message });
 
-    if (/abort|timeout/i.test(message)) {
-      return sendJson(res, 504, {
-        error:
-          'Request ke KIE timeout. Coba Generate lagi.',
-      });
-    }
-
-    if (
-      /KIE_API_KEY belum dikonfigurasi/i.test(
-        message
-      )
-    ) {
-      return sendJson(res, 500, {
-        error: message,
-      });
-    }
-
-    if (
-      /KIE mengembalikan response yang tidak valid/i.test(
-        message
-      )
-    ) {
-      return sendJson(res, 502, {
-        error: message,
-      });
-    }
-
-    return sendJson(res, 500, {
-      error: `Server error: ${message}`,
-    });
+    return sendJson(res, 500, { error: `Server error: ${message}` });
   }
 }
