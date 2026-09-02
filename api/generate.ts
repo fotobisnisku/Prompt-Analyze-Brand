@@ -82,7 +82,7 @@ export default async function handler(
       if (systemText) {
         messages.push({
           role: 'system',
-          content: [{ type: 'text', text: systemText }],
+          content: systemText,
         });
       }
     }
