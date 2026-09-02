@@ -24,7 +24,7 @@ export const AI_PROVIDER: AIProvider =
   (process.env.AI_PROVIDER || 'kie') as AIProvider;
 
 export const AI_MODEL =
-  process.env.AI_MODEL || 'gemini-2.5-flash';
+  process.env.AI_MODEL || 'grok-4-6';
 
 export const KIE_API_KEY =
   process.env.KIE_API_KEY || '';
